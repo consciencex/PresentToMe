@@ -123,7 +123,7 @@
     const on = k => boxes().some(b => b.dataset.cost === k && b.checked);
     const once = on('capex') ? INPUT.capex : 0, year = on('om') ? INPUT.omYear : 0;
     $('#apTotal').textContent = `${fmtMoney(once)} once + ${fmtMoney(year)} a year`;
-    $('#apPay').textContent = on('capex') ? `pays back in ${yrs(MODEL.payback)}` : '';
+    $('#apPay').classList.toggle('is-off', !on('capex'));
   }
   H.decision = {
     enter() {

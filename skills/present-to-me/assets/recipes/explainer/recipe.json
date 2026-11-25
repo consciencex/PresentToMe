@@ -1,0 +1,49 @@
+{
+  "title": "How a battery gets a house through the evening",
+  "description": "An example explainer deck on how a home battery carries the midday sun into the evening. Built with the PresentToMe starter. Every figure is example data.",
+  "chapters": [
+    {
+      "title": "Open",
+      "num": null,
+      "slides": [
+        "title"
+      ]
+    },
+    {
+      "title": "What it is",
+      "num": "01",
+      "slides": [
+        "parts",
+        "place"
+      ]
+    },
+    {
+      "title": "How it works",
+      "num": "02",
+      "slides": [
+        "day",
+        "numbers",
+        "limits"
+      ]
+    },
+    {
+      "title": "Your house",
+      "num": "03",
+      "slides": [
+        "tryit",
+        "close"
+      ]
+    },
+    {
+      "title": "Appendix",
+      "num": "A",
+      "slides": [
+        "qa",
+        "sources"
+      ]
+    }
+  ],
+  "styles": [
+    "styles/slides-explainer.css"
+  ]
+}

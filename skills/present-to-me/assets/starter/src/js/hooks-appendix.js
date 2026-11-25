@@ -1,14 +1,6 @@
 /* ===== Appendix: the questions page and the source registry ===== */
 
-/* ---------- questions: the hard ones, answered before they are asked. EXAMPLE DATA. ---------- */
-const QA = [
-  ['What happens on cloudy days and at night?', 'We buy from the grid, exactly as today. The roof covers about a quarter of our use over a year; nothing depends on it being sunny on a given day.'],
-  ['Can the roof carry it?', 'Yes. The survey found a spare load of 25 kg/m² and the array adds 15. It also needs under half of the usable roof.'],
-  ['Why not rent the panels and keep the cash?', 'Renting costs least for the first years, then owning does for the rest of the system\'s life. The crossing is on the cost-lines slide and moves with the inputs on the money slide.'],
-  ['What if grid prices stop rising?', 'Set the price rise to zero on the money slide: the payback moves out and owning still ends ahead.'],
-  ['Who looks after it?', 'Facilities, about one day a month, with a monitoring and cleaning contract funded as a yearly line.'],
-  ['What does it not do?', 'It does not take us off the grid. The battery carries short cuts and the evening peak. Long cuts and most nights still depend on the grid.'],
-];
+/* ---------- questions: the rows are QA in sources.js ---------- */
 H.qa = {
   enter() {
     const g = $('#qaGrid'); if (g.childElementCount) return;

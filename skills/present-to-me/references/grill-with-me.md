@@ -9,7 +9,7 @@ An interview that finds the story before any slide exists. Most weak decks fail 
 - **Offer your best guess with each question.** "I think the people in the room are the finance committee, and what they fear is a cost that keeps growing. Is that right?" The user can say yes, or fix one word. A bare question makes them do all the work.
 - **Follow the dependencies.** Audience decides everything after it, so it comes first. Then the decision, then the one sentence. Do not ask about colours before you know what the talk is for.
 - **Push on vague answers.** The answers that matter most arrive vague the first time. The table below shows the usual ones and what to ask next.
-- **Say no when it is true.** If the user wants to add a point that does not serve the decision, say so and offer the appendix. Agreement is not the job.
+- **Say no when it is true.** If the user wants to add a point that does not serve the decision, say so and offer the appendix.
 - **Stop when the brief is written.** Usually 8 to 14 questions. If the user says "just build it", write the brief from what you have, mark each guessed line `ASSUMED`, show it, and continue. An assumption the user can see is fine. A hidden one is not.
 
 If your environment has a tool for asking multiple-choice questions, use it for questions with a few clear answers, with your recommendation first. Use plain text for the open ones.
@@ -20,14 +20,14 @@ Eight lines. The interview exists to fill them.
 
 ```
 STORY BRIEF
-1. Audience      who decides, what they believe now, what they are afraid of
-2. Decision      what they should do after the talk: one verb, one object
-3. One sentence  the claim to remember if they forget everything else
-4. Why now       what makes waiting costly, starting with forces outside the organisation
-5. Proof         the three strongest pieces of evidence, each with its source
-6. Hard questions the three objections you expect, and the honest answer to each
-7. Numbers       which figures go on screen, where each comes from, which are estimates
-8. Constraints   minutes, slide language and spoken language, brand, room, privacy, deadline
+1. Audience        who decides, what they believe now, what they are afraid of
+2. Decision        what they should do after the talk: one verb, one object
+3. One sentence    the claim to remember if they forget everything else
+4. Why now         what makes waiting costly, starting with forces outside the organisation
+5. Proof           the three strongest pieces of evidence, each with its source
+6. Hard questions  the three objections you expect, and the honest answer to each
+7. Numbers         which numbers go on screen, where each comes from, which are estimates
+8. Constraints     minutes, slide language and spoken language, brand, room, privacy, deadline
 
 Material to show: real things (machines, places, products), companies (logos), a demo, people
 Cut list:        true things that do not serve the decision (they go to the appendix or out)
@@ -140,7 +140,7 @@ Show the user the brief and the slide list together. Ask for one thing: "What is
 
 ## A short example
 
-> **Agent:** From the two files you sent, I understand this: Harbor Foods runs a cold-storage warehouse, the power bill is about $42k a month and rising, and an installer has quoted $720k for solar on the roof. I think the talk is for the board, and the decision is to buy. Is that right?
+> **Agent:** From the two files you sent, I understand this: Example Foods runs a cold-storage warehouse, the power bill is about $42k a month and rising, and an installer has quoted $720k for solar on the roof. I think the talk is for the board, and the decision is to buy. Is that right?
 >
 > **User:** Yes, but the board is three people and the CFO decides.
 >

@@ -1,6 +1,6 @@
 /* Base: a fixed 1920 × 1080 stage scaled to the window, one idea per slide.
    Colour carries meaning, never decoration: give --m1, --m2 and --m3 one meaning each for the whole deck and write it in DECK.md
-   (for example m1 = what we own, m2 = what we rent, m3 = the third option). Use the -ink variant for text, -soft for fills. */
+   (in the example deck m1 = our own roof, m2 = the grid, m3 = renting the panels). Use the -ink variant for text, -soft for fills. */
 :root {
   --bg: #FFFFFF; --bg-2: #F7F8FA; --surface: #F4F5F7; --surface-2: #ECEEF1; --surface-3: #E1E4E9;
   --line: #CDD2DA; --line-2: #E4E7EC;
@@ -45,6 +45,7 @@ button { font: inherit; color: inherit }
 /* builds */
 [data-s] { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1) }
 [data-s].is-on { opacity: 1; transform: none }
+.slide.is-entering [data-s] { transition: none }
 [data-s].fade { transform: none }
 [data-s].dim-later.is-dim { opacity: .28 }
 

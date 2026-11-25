@@ -6,10 +6,78 @@ Two tools ship with the starter.
 
 | Tool | For | How it works |
 |---|---|---|
-| Anatomy scenes (`anatomy/`) | Detailed line-art figures with named pieces that light up and move apart | A Node script draws the figure once and writes an SVG. The slide places it |
+| Anatomy scenes (`anatomy/`) | Detailed line-art figures with named pieces that light up and move apart | A Node script draws the figure once and writes `<name>.data.json`. The slide places it |
 | `Iso` (`src/js/iso.js`) | Simple stacks and blocks that rotate by drag, lift, and take clicks | Boxes drawn live in the browser |
 
-The scene tools are a vendored subset of the [Anatomy kit](https://github.com/wheresryan22/anatomy) by Ryan (MIT, `anatomy/KIT-LICENSE`). Anatomy is a full agent skill for detailed illustration, with curved bodies, turned parts and a stricter audit. When a figure needs more than boxes and extruded profiles, install that skill and use it.
+The scene tools are a vendored subset of the [Anatomy kit](https://github.com/wheresryan22/anatomy) by Ryan (MIT, `anatomy/KIT-LICENSE`). Anatomy is a full agent skill for detailed illustration, with curved bodies, turned parts and a stricter audit. When a figure needs more than boxes and extruded profiles, tell the user that Anatomy exists. Installing another skill is their decision.
+
+## Presets: a figure in two lines
+
+`anatomy/scenes/presets.mjs` draws eight common subjects. One call writes a finished scene: named pieces, a move and an anchor for each piece, and a frame that holds the full explode. Start here. Write a scene by hand only when no preset fits.
+
+```js
+// anatomy/scenes/air.mjs
+import { laptop } from "./presets.mjs";
+laptop({ name: "air", fan: false, ports: { left: 2, right: 1 } });
+```
+
+```
+node anatomy/scenes/air.mjs --audit                      # writes anatomy/scenes/air.data.json
+node anatomy/scenes/preview.mjs air 1 shots/air-1.png    # look at it apart, then again with 0
+npm run build                                            # the deck has the figure "air"
+```
+
+| Preset | Draws | Default size | Pieces | Options besides `name` |
+|---|---|---|---|---|
+| `stack` | Named slabs on a base. The general preset | 30 × 20, any unit | The layer ids. Default `base`, `cells`, `board`, `cover` | `size: [w, d]`, `layers: [{ id, h, inset, tone, detail }]`, `gap`, `r` |
+| `laptop` | An open notebook | 30.4 × 21.5 × 1.1 cm | `base`, `battery`, `board`, `fan`, `keys`, `lid` | `size: [width, depth, thickness]`, `lid` (degrees open, 110), `parts` (the pieces to draw), `fan` (true), `ports: { left, right }`, `side`, `gap` |
+| `phone` | A handset lying flat | 7.2 × 14.7 × 0.8 cm | `glass`, `display`, `board`, `battery`, `back`, `camera` | `size: [width, length, thickness]`, `up: "back"` or `"screen"`, `camera` (true), `gap` |
+| `tower` | A desktop tower whose side panel slides off | 21 × 45 × 46 cm | `base` (the case), `panel`, `board`, `gpu`, `psu`, `drives` | `size: [width, depth, height]`, `parts` (the inner pieces to draw), `drives` (how many, 3) |
+| `rack` | A server cabinet whose units slide out | 60 × 100 cm, six units of 5 U | `base` (the cabinet), `u1` to `u6` from the top | `size: [width, depth]`, `units` (a number, or `[{ id, u, detail }]` from the top), `u` (unit height in U), `slide` |
+| `building` | Floors on a site, with a roof | 20 × 12 m, four floors of 3.2 m | `base` (the site), `f1` to `f4` from the ground, `roof` | `size: [w, d]`, `floors` (a number, or `[{ id, h }]` from the ground up), `floor` (storey height), `gap` |
+| `box` | A product in its package | 24 × 16 × 9 cm | `base` (the tray), `product`, `lid` | `size: [w, d, h]`, `product` (true), `detail` (on top of the product), `gap` |
+| `column` | A vertical round body: a launcher, a bottle, a silo, a battery cell | 3.7 across × 40 high, m | The segment ids. Default `stage1`, `interstage`, `stage2`, `nose`. Also `base` with `base: "pad"` | `size: [diameter, height]`, `segments: [{ id, h, r, detail, tone }]` from the ground up, `cap: "cone"`, `"dome"` or `"flat"`, `base: "legs"`, `"pad"` or `"none"`, `gap` |
+
+- Every preset also takes `W`, `H`, `AZ`, `EL`, `pad`, `label` and `dir`. Leave `W` and `H` out: the figure then takes the shape of what it holds, as large as fits 1100 × 700.
+- `gap` is the distance between neighbouring pieces when the figure is fully apart, in the preset's unit.
+- `detail` on a `stack` layer or a `rack` unit is a surface pattern: `grid`, `vents`, `cells`, `chips`, `screen`, `ports`, `windows` or `none`. On a stack layer, `ports` and `windows` go on the two visible sides and the others on the top. A `column` segment takes `bands`, `ribs`, `grid` or `none`.
+- A `stack` layer with `skirt: true` gets walls that hang down to the first layer, so the layers between stay hidden until it lifts. The laptop's keyboard deck, the phone's top layer and the lid of the box are built this way.
+- A `column` splits its height among the segments in proportion to their `h`. `r` is a radius, or `[bottom, top]` for a taper such as a neck or a hopper. `cap` shapes the top segment.
+- The bottom piece does not move: the first layer of a stack, the first segment of a column, and the piece named `base`.
+- `anatomy/scenes/examples/` holds one scene per preset with its defaults, and the output. The build does not load that folder.
+
+### One part per press
+
+`Kit.figure` turns a scene into the slide that explains it. The `split` template is this slide in markup, with no JavaScript:
+
+```html
+<div class="fill" data-kit="figure" data-scene="air">
+  <template data-piece="battery" data-tag="1 · Battery" data-h="Lasts the day" data-value="18" data-unit="hours">Fills most of the base.</template>
+  <template data-piece="board" data-tag="2 · Chip" data-h="No fan needed" data-tone="m2">Runs cool enough to drop the fan.</template>
+</div>
+```
+
+On the element, `data-list` adds a list of the parts above the card and `data-side="left"` puts the card on the left. On a template, `data-value` and `data-unit` are the large figure (leave both out for none), `data-tone` lights the part in `m2`, `m3`, `risk` or `ok`, and `data-lift` sets how far it moves out, from 0 to 1. The slide needs `data-steps` equal to the number of templates. Until the scene exists, the slide shows a box that names the file to write.
+
+In a hook, for figures that come from the model:
+
+```js
+H.inside = pressHook(Kit.figure($('#fig'), SCN.air, {
+  card: $('#card'), list: $('#parts'),
+  parts: [
+    { piece: 'battery', tag: '1 · Battery', h: 'Lasts the day', line: 'Fills most of the base.', fig: () => [INPUT.hours, 'hours'] },
+    { piece: 'board', tag: '2 · Chip', h: 'No fan needed', line: 'Runs cool enough to drop the fan.', tone: 'm2', lift: 1 },
+  ],
+}));
+```
+
+`Kit.figure(box, scene, { parts, card, list, leader, lift, seconds })` returns `{ settle, play }`. On entering, the figure settles from apart to assembled over `seconds` (1.8). Press k lights part k, moves it by `lift` of its move (0.6), moves the pieces that cover it fully out of the way, dims every other piece except `base`, fills the card and draws a dotted leader from the card to the part's anchor. At the last press every named part is lit. `card` may sit left or right of the figure. `list` is an element whose children name the parts, or an array of elements. `leader: false` leaves the line out. Only `piece` is required in a part.
+
+Three things go wrong most often.
+
+1. **A piece name that the scene does not have.** The part then lights nothing, and the browser console names the pieces the scene has. Take the names from the table above.
+2. **Only two sides are drawn.** The camera sees the +x and +y faces, so a laptop shows the ports of one side (`side: "left"` or `"right"`), a tower opens on +x, and a rack shows its fronts on +x. Turning the camera with `AZ` does not move detail to another face.
+3. **The frame holds the full explode.** The assembled figure therefore sits low in its frame, with empty room above. A larger `gap` makes the assembled figure smaller on the slide. Change `gap` before you change `W` or `H`.
 
 ## From scene file to slide
 
@@ -23,7 +91,7 @@ anatomy/scenes/hero.mjs  ──node──▶  anatomy/scenes/hero.data.json  ─
 4. `npm run build`. Every `.data.json` in the folder is available as `SCN.<name>`. Nothing needs registering.
 5. Place it in a hook.
 
-`npm run scenes` regenerates every scene. Commit the `.data.json` files.
+`npm run scenes` regenerates every scene. Keep the `.data.json` files with the deck, so it builds without running the scenes.
 
 ## Writing a scene
 
@@ -55,13 +123,15 @@ finish([halo({ x: -3.5, y: -3.5, w: D + 16, d: L + 7, r: 1 }, 0)], { anchors: { 
 | Helper | Draws |
 |---|---|
 | `box(name, { x, y, w, d, r }, z, height, style, { piece, extra, ground, bias, steps })` | A block with rounded corners, standing on height `z` |
-| `profile(name, [[x, z], …], y0, y1, style, { piece, extra })` | A side profile extruded along y: a tilted panel row, a sloped roof, a ramp |
+| `profile(name, [[x, z], …], y0, y1, style, { piece, extra, along })` | A side profile extruded along y: a tilted panel row, a sloped roof, a ramp. `along: "x"` takes `[y, z]` points and extrudes along x |
+| `prism(name, [[x, y], …], z, height, style, { piece, extra, ground })` | Any plan outline extruded upward: an L-shaped wall, a band that follows a rounded edge |
+| `turned(name, [x, y], [[z, radius], …], style, { piece, extra, ground })` | A round body on a vertical axis: a cylinder, a taper, a cone. A third value of `true` on a point rounds the outline through it |
 | `rectX(x, y0, y1, z0, z1)`, `rectY(y, x0, x1, z0, z1)` | A flat rectangle on a face, as a path: doors, grilles, vents |
 | `line(path, { tone, dashed, dotted })` | A stroked path |
 | `dots(points, { size, tone })` | Dots: perforations, foam, lights |
 | `halo(plan, z)` | A soft shadow under the figure |
 | `at([x, y, z])` | A world point in figure pixels, for building your own paths with `k.pathOf` |
-| `finish(back, { anchors, front, audit })` | Sorts the items, writes the file. `anchors` exports named points for leader lines |
+| `finish(back, { anchors, covers, front, audit })` | Sorts the items, writes the file. `anchors` exports named points for leader lines. `covers: { piece: [pieces] }` names the pieces that hide a piece while assembled, and `Kit.figure` moves them away when it shows that piece |
 
 Tones are `hi`, `mid`, `lo`, `faint`: darker to lighter line colour. Use `hi` for the outline of what matters and `faint` for surface detail.
 
@@ -113,22 +183,22 @@ These come from scenes that failed first.
 
 The figure's colours are CSS variables on `.iso[data-theme="light"]` in `styles/style.css`: line tones from the deck's ink, lit faces mixed from `--m1`. Change them there, once.
 
-To light one piece in another meaning colour, override the lit variables on that piece. The example lights the grid connection in blue, because blue means the grid:
+To light one piece in another meaning colour, give its part `tone: 'm2'` in `Kit.figure`. The example lights the grid connection in blue, because blue means the grid. Without `Kit.figure`, override the lit variables on that piece:
 
 ```css
-#anatomy [data-piece="meter"] { --anatomy-face: color-mix(in srgb, var(--m2) 34%, white); --anatomy-lit: var(--m2-ink); }
+.my-figure [data-piece="meter"] { --anatomy-face: color-mix(in srgb, var(--m2) 30%, var(--bg)); --anatomy-lit: var(--m2-ink); }
 ```
 
 To fade the parts not being discussed, lighten their line variables. Do not lower opacity, which lets hidden edges show through the fills.
 
 ### Patterns that use a figure
 
-- **A part per press.** Light one piece, lift it slightly, show its card, draw a leader. Pattern 19, `H.anatomy` in the example.
+- **A part per press.** Light one piece, lift it slightly, show its card, draw a leader. `Kit.figure` does all of it. Pattern 20, `H.anatomy` in the example.
 - **A figure as a gauge.** Place the scene twice, the second copy lit and clipped from the bottom with `clip-path: inset(…)` to the share being shown.
 - **Assembly on entering.** Explode from 1 to 0 over 1.2 to 1.8 seconds.
 - **A hero.** The figure with the key part lit, on the title slide.
 
-A figure appears on one slide only. For a second slide about the same object, write a second scene from a different angle or scale. Swapping the axes and changing the azimuth is enough to make it read as a new drawing.
+A figure may travel to the next slide. Give its box `data-morph` on both slides and show it there at another size and in another role: large as the subject, then small inside the place it belongs to. The engine moves it and lands it exactly on the arriving figure. Do not repeat the same figure at the same size on slides far apart. For a later slide about the same object, write a second scene from a different angle or scale. Swapping the axes and changing the azimuth is enough to make it read as a new drawing.
 
 ## The small live renderer
 
@@ -142,4 +212,4 @@ plates[2].dz = 18; iso.render();          // lift one plate
 iso.enableDrag(-0.9, 0.9);                // let the presenter turn it
 ```
 
-Each box has `x, y, z, w, d, h, color`, optional offsets `dx, dy, dz`, opacity `op`, a tooltip and a click handler. Call `render()` after any change. Use it for pattern 18, the layer stack.
+Each box has `x, y, z, w, d, h, color`, optional offsets `dx, dy, dz`, opacity `op`, a tooltip and a click handler. Call `render()` after any change. Use it for pattern 19, the layer stack.

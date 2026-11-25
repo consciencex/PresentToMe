@@ -1,6 +1,6 @@
 # Notes, scripts and presenting
 
-The slides are half of the talk. The other half is what the presenter says, and it is your job to write it and keep it in step with the slides.
+You write what the presenter says, and you keep it in step with the slides.
 
 ## Speaker notes
 
@@ -25,7 +25,7 @@ Every slide ends with notes. They are written to be said aloud.
 
 The build warns when a slide has presses and its notes are not split by press.
 
-Notes travel inside the page. For a public link, build with `--no-notes`.
+Notes are inside `dist/`. For anything other people will open, use `npm run build:public`.
 
 ## Keeping words and slides in step
 
@@ -94,12 +94,12 @@ A 15 to 60 second film before the title sets the mood without the presenter sayi
 - Three or four scenes, one short sentence each, large type, one moving picture per scene.
 - Show the outside world or the felt problem. No proposal, no product.
 - The last line is the title's headline, word for word.
-- With narration: write the script first, record or generate the voice, then set each scene's times to the voice. Put an `<audio id="filmAudio">` in the slide. While it plays, its clock drives the film. Any change to the spoken words means a new recording, so settle the words early.
+- With narration: write the script first, then record the voice. A generated voice sends the script to a voice service, so ask the user before using one. Then set each scene's times to the voice. Put an `<audio id="filmAudio">` in the slide. While it plays, its clock drives the film. Any change to the spoken words means a new recording, so settle the words early.
 - Name a media file after its content (a short hash in the file name) when it may change. Browsers replay a cached old file under an unchanged name.
 
 ## Going further: a prompter that follows the voice
 
-For a long talk, the presenter window can grow into a prompter. The model deck this skill comes from had one, and its design is worth knowing before you build your own:
+For a long talk, the presenter window can grow into a prompter. The deck this skill was distilled from had one. Its design is worth knowing before you build your own:
 
 - The unit is a block: everything said after one press. The window shows the whole block and changes block when the deck moves. Nobody scrolls.
 - Three line states, always visible from across a room: said (dim, ticked), now (a filled band), not yet (bright).

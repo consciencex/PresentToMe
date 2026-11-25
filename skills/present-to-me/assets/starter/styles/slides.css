@@ -88,7 +88,9 @@
 .ap-row input:not(:checked) ~ .ap-what, .ap-row input:not(:checked) ~ .ap-amt { opacity: .35 }
 .ap-total { display: flex; align-items: baseline; gap: 26px; border-top: 2px solid var(--line); padding-top: 24px }
 .ap-total > b { font: 700 46px/1 var(--f-display); font-stretch: 112%; font-variant-numeric: tabular-nums }
-.ap-pay { margin-left: auto; font: 600 28px/1 var(--f-body) }
+.ap-pay { margin-left: auto; font: 600 28px/1 var(--f-body); transition: opacity .4s ease }
+.ap-pay.is-off { opacity: 0 }
+.ap-pay b { font: inherit }
 
 /* ---------- appendix: questions, sources ---------- */
 .qa-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; align-content: start }

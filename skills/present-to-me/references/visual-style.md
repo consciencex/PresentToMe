@@ -10,6 +10,16 @@ The look is light, quiet and precise: white stage, thin grey lines, three colour
 - The page number sits left of the brand mark, in mono.
 - Outside the stage: a 56px control bar (previous, next, where you are, count, Notes, Presenter, Slides, full screen) with a 2px progress line. A notes panel and a slide menu float above it.
 
+## Keep the house style
+
+The look is part of the method. An agent that swaps in its own design produces a different product.
+
+- A brand changes three things: the colour tokens, the typeface link, and the logo. It does not change the layout, the cards or the type scale.
+- Slides are light. Do not add dark slides for effect, and do not alternate light and dark.
+- Do not replace `styles/style.css`. Add to `styles/slides.css`.
+- A product photo is evidence. Use one where the slide is about how the thing looks, at most once or twice, with the user's agreement to fetch it. It never replaces the drawing. When the subject is a physical product, draw it as a 3D figure.
+- If the user asks for a different look, change the tokens first and show them. Most requests end there.
+
 ## Tokens
 
 All colour and type come from `:root` in `styles/style.css`. Slides and hooks never contain a raw hex value: CSS uses `var(--m1-ink)`, and SVG drawn by a hook uses `C['m1-ink']`, which reads the same token.
@@ -50,11 +60,11 @@ A fourth category gets a neutral grey, or the deck is contrasting too many thing
 | Tag `.tag` | Mono, 500, 18px, uppercase, letter-spacing .06em |
 | Big number `.big` | Display, 700, 54 to 92px, tabular figures, with a small grey unit |
 
-The default faces are Archivo (display), IBM Plex Sans (body) and IBM Plex Mono, loaded from the link in `deck.config.json`. Change the link and the three `--f-*` tokens for another brand. For a script the body face lacks (Thai, Arabic, CJK), add a companion face to the link and to `--f-body`. Run `npm run fonts` so the offline file carries them.
+The default faces are Archivo (display), IBM Plex Sans (body) and IBM Plex Mono, loaded from the link in `deck.config.json`. Change the link and the three `--f-*` tokens for another brand. For a script the default faces lack, add a companion face to the link and to the three tokens, and give the headings more line height if the script stacks marks above and below the line. `new-deck.mjs --lang th` does this for Thai: it adds IBM Plex Sans Thai and lists `styles/lang-th.css`. Use that file as the model for Arabic, Devanagari or CJK. Run `npm run fonts` so the offline file carries the faces.
 
 Uppercase is for tags and eyebrows only. Sentences are in sentence case.
 
-## The house card
+## The raised card
 
 Almost every content slide is built from this.
 
@@ -70,6 +80,7 @@ Almost every content slide is built from this.
 - `.card` is a flat surface with a 20px radius. `.raised` lifts it: a white-to-surface gradient, a 1px border, a soft shadow.
 - The tag names the item. The heading states it. The drawing shows it. The `.pk` line, under a hairline, says what follows from it: a plain clause, then the clause that matters in bold.
 - One drawing per card. No bullets inside a card.
+- `.card p` sets the size of every paragraph in a card. A paragraph with its own class needs the card in its selector too (`.card .price`), or the card's rule wins.
 
 ## Small parts
 
@@ -104,7 +115,7 @@ Almost every content slide is built from this.
 
 ## What reads as machine-made
 
-Leave these out. Each one adds ink that carries no meaning, and audiences have learned to read that as filler.
+Leave these out. Each one adds ink that carries no meaning.
 
 - Line icons in tinted rounded squares, or any icon standing in for a drawing.
 - Cards with a coloured left edge, a coloured header bar, or a gradient fill.

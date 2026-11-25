@@ -1,0 +1,11 @@
+{
+  "title": "Light 13 or Studio 15? Your week decides.",
+  "description": "Example versus deck: two invented laptops, a light one and a powerful one, for a buyer who takes one. Built with the PresentToMe starter.",
+  "chapters": [
+    { "title": "Open", "num": null, "slides": ["title"] },
+    { "title": "What separates them", "num": "01", "slides": ["same", "difference", "why"] },
+    { "title": "Which is yours", "num": "02", "slides": ["years", "choose", "verdict"] },
+    { "title": "Appendix", "num": "A", "slides": ["qa", "sources"] }
+  ],
+  "styles": ["styles/slides-versus.css"]
+}

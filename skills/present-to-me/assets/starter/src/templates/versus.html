@@ -1,0 +1,24 @@
+<!--
+  Template "versus": A against B, row by row, a ring on the better value in each row. Works with no JavaScript.
+  Use: node tools/new-slide.mjs <id> versus
+  Edit the JSON in data-kit-data: a and b name the two sides, each row has a label, the two values, a unit and better: "low" or "high".
+  The JSON sits in single quotes, so write an apostrophe inside it as &#39;. Options: references/kit-components.md, section "versus".
+-->
+<section class="slide" id="new-slide" data-title="A against B" data-steps="0">
+  <div class="in">
+    <div class="hd">
+      <p class="eyebrow"><span class="ch">00</span> Chapter</p>
+      <h2 class="t">Option A wins on <em>three of four</em>.</h2>
+    </div>
+    <div class="card raised kit-card">
+      <svg data-kit="versus" aria-label="Option A against option B on price, weight, battery and warranty; A is better on three of the four"
+        data-kit-data='{"size":[1600,560],"a":{"name":"Option A","tone":"m1"},"b":{"name":"Option B","tone":"m2"},"rows":[
+          {"label":"Price","a":1299,"b":1099,"format":"moneyExact","better":"low"},
+          {"label":"Weight","a":1.24,"b":1.55,"unit":"kg","better":"low"},
+          {"label":"Battery","a":18,"b":14,"unit":"h","better":"high"},
+          {"label":"Warranty","a":3,"b":2,"unit":"years","better":"high"}]}'></svg>
+    </div>
+  </div>
+  <p class="src">Where the numbers on this slide come from.</p><span class="pg"></span>
+  <aside class="notes"><h4>A against B</h4><p>What you say when the comparison draws in: the rows that decide it, and the one row where B is better.</p></aside>
+</section>

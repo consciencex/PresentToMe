@@ -5,16 +5,18 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { build, ROOT } from "./build.mjs";
+import { fileFor, outDir } from "./pw.mjs";
 
-const PORT = +(process.env.PORT || 5173);
-const DIST = path.join(ROOT, "dist");
+// The preview answers on this machine only. HOST=0.0.0.0 lets other devices on the network open the deck, speaker notes included.
+const PORT = +(process.env.PORT || 5173), HOST = process.env.HOST || "127.0.0.1";
+const DIST = outDir(ROOT);
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif", ".woff2": "font/woff2", ".mp3": "audio/mpeg", ".mp4": "video/mp4" };
 const clients = new Set();
 const RELOAD = `<script>(()=>{const es=new EventSource('/__reload');es.onmessage=()=>location.reload();})();</script>`;
 
 function rebuild(why) {
   try {
-    const r = build({ quiet: true });
+    const r = build({ quiet: true, out: DIST });
     console.log(`${new Date().toLocaleTimeString()}  rebuilt${why ? " (" + why + ")" : ""}${r.ok ? "" : "  (fix the ✗ items above)"}`);
     for (const c of clients) c.write("data: reload\n\n");
   } catch (e) { console.error("build failed:", e.message); }
@@ -32,13 +34,15 @@ for (const dir of ["slides", "styles", "src", "assets", "brand", "public", "anat
 }
 
 http.createServer((req, res) => {
-  const url = decodeURIComponent(req.url.split("?")[0]);
-  if (url === "/__reload") {
+  // a page on another site must not be able to read the preview by pointing its own host name at this machine
+  const name = String(req.headers.host || "").replace(/:\d+$/, "");
+  if (HOST === "127.0.0.1" && !["localhost", "127.0.0.1", "[::1]"].includes(name)) { res.writeHead(403).end(); return; }
+  if (req.url.split("?")[0] === "/__reload") {
     res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
     res.write("retry: 500\n\n"); clients.add(res); req.on("close", () => clients.delete(res)); return;
   }
-  let file = path.join(DIST, url === "/" ? "index.html" : url);
-  if (!file.startsWith(DIST)) { res.writeHead(403).end(); return; }
+  let file = fileFor(DIST, req.url);
+  if (!file) { res.writeHead(400).end(); return; }
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
   if (!fs.existsSync(file)) { res.writeHead(404).end("not found"); return; }
   const ext = path.extname(file);
@@ -53,4 +57,4 @@ http.createServer((req, res) => {
   }
   res.writeHead(200, { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": "no-store", "Accept-Ranges": "bytes" });
   res.end(body);
-}).listen(PORT, () => console.log(`\n  deck preview → http://localhost:${PORT}\n  (offline single file → http://localhost:${PORT}/offline.html)\n`));
+}).listen(PORT, HOST, () => console.log(`\n  deck preview → http://localhost:${PORT}\n  (offline single file → http://localhost:${PORT}/offline.html)\n`));

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: bare-topic-explainer-thai
+expected_outcome: |
+  A Thai explainer deck built from the explainer recipe: the rocket as a 3D figure (the column preset or a written scene) whose stages are named one per press, the flight as stages with the rocket travelling through them, the few numbers that make it real, an honest limit, and a slide the room can drive. The figure travels between neighbouring slides. Facts come from public sources with the date read, or are marked as unverified. The reply is in Thai and lists what was assumed.

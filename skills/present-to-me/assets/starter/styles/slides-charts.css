@@ -26,7 +26,10 @@
 
 /* 02 · day: stat column on the left, the 24-hour chart on the right */
 .dy-card { flex-direction: row; gap: 40px; padding: 36px 40px 28px; border-radius: 24px; align-items: stretch }
-.dy-side { width: 360px; flex: none; display: flex; flex-direction: column; gap: 34px }
+.dy-side { width: 360px; flex: none; display: flex; flex-direction: column; gap: 22px }
+.dy-fig { flex: 1; min-height: 0; display: flex; align-items: center }
+.dy-fig .iso { width: 100% }
+.dy-fig .iso svg { width: 100%; height: auto; display: block }
 .dy-stat { display: flex; flex-direction: column; gap: 6px }
 .dy-k { font: 500 24px/1.3 var(--f-body); color: var(--fg-2) }
 .dy-v { font: 700 54px/1 var(--f-display); font-stretch: 112%; color: var(--fg) }
@@ -35,6 +38,6 @@
 .dy-big { font: 700 150px/.9 var(--f-display); font-stretch: 118%; letter-spacing: -.02em; color: var(--m1-ink) }
 .dy-sun .dy-k { color: var(--m1-ink); font-weight: 600; font-size: 28px }
 .dy-sub { font: 500 19px/1.3 var(--f-mono); color: var(--fg-3) }
-.dy-card svg { flex: 1; min-width: 0; height: 100%; width: auto }
+.dy-card > svg { flex: 1; min-width: 0; height: 100%; width: auto }
 .dy-take { font: 400 30px/1.35 var(--f-body); color: var(--fg-2); margin-top: -12px }
 .dy-take b { color: var(--m1-ink); font-weight: 600 }

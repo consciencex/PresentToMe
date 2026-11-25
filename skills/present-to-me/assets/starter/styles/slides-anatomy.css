@@ -1,24 +1,7 @@
-/* ---------- anatomy: the system figure (left two thirds), the parts list, one card and the takeaway (right) ---------- */
+/* ---------- anatomy: the system figure (left two thirds), the parts list, one card and the takeaway (right) ----------
+   The list, the card, the leader and the lit and dimmed parts are styled by Kit.figure (src/js/kit-figure.js). */
 #anatomy .an-row { position: relative; flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 56px }
 #anatomy .an-fig { align-self: end; margin-top: -120px }
 #anatomy .an-side { display: flex; flex-direction: column; gap: 26px; min-width: 0 }
-#anatomy .an-lead { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none }
-
-#anatomy .an-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px }
-#anatomy .an-list li { font: 500 20px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-3); padding: 12px 0; border-top: 1px solid var(--line-2); transition: color .4s ease }
-#anatomy .an-list li span { margin-right: 10px }
-#anatomy .an-list li.on { color: var(--m1-ink); border-top-color: var(--m1) }
-#anatomy .an-list li.on[data-tone="m2"] { color: var(--m2-ink); border-top-color: var(--m2) }
-
-#anatomy .an-card { gap: 12px; opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1) }
-#anatomy .an-card.on { opacity: 1; transform: none }
-#anatomy .an-card .tag { color: var(--m1-ink) }
-#anatomy .an-card[data-tone="m2"] .tag, #anatomy .an-card[data-tone="m2"] .an-num { color: var(--m2-ink) }
-#anatomy .an-num { font: 700 76px/1 var(--f-display); font-stretch: 118%; letter-spacing: -.02em; color: var(--m1-ink); font-variant-numeric: tabular-nums; margin-top: 8px }
-#anatomy .an-num small { font: 500 24px/1 var(--f-mono); letter-spacing: .02em; color: var(--fg-3); margin-left: 10px }
 #anatomy .an-take { font: 400 27px/1.4 var(--f-body); color: var(--fg-2); margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line-2) }
 #anatomy .an-take b { font-weight: 600 }
-
-/* the part that is not being explained steps back to light lines; the grid connection lights in the grid's colour */
-#anatomy .iso [data-piece].an-dim { --anatomy-hi: var(--line); --anatomy-mid: var(--line); --anatomy-lo: var(--line-2); --anatomy-faint: var(--line-2) }
-#anatomy .iso [data-piece="meter"] { --anatomy-face: color-mix(in srgb, var(--m2) 30%, white); --anatomy-lit-top: color-mix(in srgb, var(--m2) 15%, white); --anatomy-lit-shade: color-mix(in srgb, var(--m2) 55%, white); --anatomy-lit: var(--m2-ink) }

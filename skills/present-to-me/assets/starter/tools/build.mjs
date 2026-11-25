@@ -17,6 +17,9 @@ const read = (p) => fs.readFileSync(rel(p), "utf8");
 const MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", avif: "image/avif", mp3: "audio/mpeg", mp4: "video/mp4", webm: "video/webm", woff2: "font/woff2" };
 const dataUri = (file) => `data:${MIME[path.extname(file).slice(1).toLowerCase()] || "application/octet-stream"};base64,${fs.readFileSync(file).toString("base64")}`;
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+// a path written as assets/… in a slide, as a file inside the assets folder. null when it climbs out (assets/../.env.local)
+const assetFile = (f) => { const p = path.resolve(rel("assets"), f); return p.startsWith(rel("assets") + path.sep) ? p : null; };
+const real = (p) => { try { return fs.realpathSync.native(p); } catch { return p; } };
 const plain = (html) => html.replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
 
 export function build({ quiet = false, out = null, notes = true } = {}) {
@@ -38,15 +41,19 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
       if (m[1] !== id) errors.push(`${file} has id="${m[1]}" but the config calls it "${id}"`);
       if (!/data-title="[^"]+"/.test(sec)) errors.push(`${file} needs data-title="…" (shown in the menu and the slide index)`);
       sec = /data-chapter="/.test(sec) ? sec.replace(/data-chapter="[^"]*"/, `data-chapter="${esc(ch.title)}"`) : sec.replace(/^<section /, `<section data-chapter="${esc(ch.title)}" `);
+      if (ch.num === "A") sec = sec.replace(/^<section /, '<section data-appendix="1" ');
       const tag = cfg.eyebrowTags?.[id] ? ` · ${cfg.eyebrowTags[id]}` : "";
       const eyebrow = ch.num === "A" ? `<span class="ch">A${k + 1}</span> ${esc(ch.title)}${tag}` : ch.num ? `<span class="ch">${ch.num}</span> ${esc(ch.title)}${tag}` : null;
-      if (eyebrow) sec = sec.replace(/<p class="eyebrow">[\s\S]*?<\/p>/, () => `<p class="eyebrow">${eyebrow}</p>`);
+      // a bare slide (a title, a closing line) keeps the line its author wrote above the heading
+      if (eyebrow && !/^<section class="slide[^"]*\bbare\b/.test(sec)) sec = sec.replace(/<p class="eyebrow">[\s\S]*?<\/p>/, () => `<p class="eyebrow">${eyebrow}</p>`);
       const title = (sec.match(/data-title="([^"]*)"/) || [])[1] || id;
       lint(file, sec);
       // a source line stays in the slide file for the author; the deck shows it only on the appendix page "Sources by slide"
-      const sm = sec.match(/<p class="src"[^>]*>([\s\S]*?)<\/p>/);
-      if (sm) { bySlide.push({ n: index.length + 1, title, html: sm[1].trim() }); sec = sec.replace(sm[0], ""); }
-      if (!notes) sec = sec.replace(/<aside class="notes">[\s\S]*?<\/aside>/, "");
+      const srcs = [...sec.matchAll(/<p class="src"[^>]*>([\s\S]*?)<\/p>/g)];
+      if (srcs.length) { bySlide.push({ n: index.length + 1, title, html: srcs.map((x) => x[1].trim()).join(" ") }); for (const x of srcs) sec = sec.replace(x[0], ""); }
+      // a build without notes drops every notes block, however its tag is written, and every HTML comment in the slide
+      if (!notes) sec = sec.replace(/<aside\b[^>]*\bnotes\b[^>]*>[\s\S]*?<\/aside>/g, "").replace(/<!--(?!SLIDE_SOURCES)[\s\S]*?-->/g, "");
+      if (!notes && /data-press=|class="[^"]*\bnotes\b/.test(sec)) errors.push(`${file}: speaker notes are still in the page after --no-notes; write them as <aside class="notes">…</aside>`);
       sections.push(sec);
       index.push({ n: index.length + 1, id, title, chapter: ch.title, steps: +((sec.match(/data-steps="(\d+)"/) || [])[1] || 0) });
     });
@@ -61,7 +68,7 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
     const steps = +((sec.match(/data-steps="(\d+)"/) || [])[1] || 0);
     const maxS = Math.max(0, ...[...sec.matchAll(/data-s="(\d+)"/g)].map((x) => +x[1]));
     if (maxS > steps) errors.push(`${file}: an element has data-s="${maxS}" but data-steps="${steps}", so it never appears`);
-    const body = sec.replace(/<aside class="notes">[\s\S]*?<\/aside>/, "").replace(/<p class="src"[\s\S]*?<\/p>/, "").replace(/<svg[\s\S]*?<\/svg>/g, " ");
+    const body = sec.replace(/<aside class="notes">[\s\S]*?<\/aside>/, "").replace(/<p class="src"[\s\S]*?<\/p>/g, "").replace(/<svg[\s\S]*?<\/svg>/g, " ");
     const h = (body.match(/<h2 class="t"[^>]*>([\s\S]*?)<\/h2>/) || [])[1];
     if (h && plain(h).length > 90) advice.push(`${file}: the title is ${plain(h).length} characters; a claim reads best under about 70`);
     const words = plain(body.replace(/<(label|button|output|select)\b[\s\S]*?<\/\1>/g, " ")).split(" ").filter(Boolean).length;   // controls are not prose
@@ -69,7 +76,10 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
     if (!/<aside class="notes">/.test(sec)) advice.push(`${file}: no speaker notes (<aside class="notes">)`);
     else if (steps > 0 && !/data-press="/.test(sec)) advice.push(`${file}: ${steps} presses but the notes are not split by press (<p data-press="1">…)`);
     if (/style="[^"]*#[0-9a-fA-F]{3,8}\b/.test(body)) advice.push(`${file}: a raw hex colour in a style attribute; use a token from styles/style.css so colour keeps one meaning`);
-    for (const [, asset] of sec.matchAll(/["'(]assets\/([^"')?#]+)/g)) if (!has(`assets/${asset}`)) errors.push(`${file}: assets/${asset} is referenced but not found`);
+    for (const [, asset] of sec.matchAll(/["'(]assets\/([^"')?#]+)/g)) {
+      if (!assetFile(asset)) errors.push(`${file}: assets/${asset} points outside the assets folder`);
+      else if (!fs.existsSync(assetFile(asset))) errors.push(`${file}: assets/${asset} is referenced but not found`);
+    }
   }
 
   let slides = sections.join("\n");
@@ -102,12 +112,13 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
   const full = cfg.motion !== "respect";
   const motion = (t) => (full ? t.replace(/\(prefers-reduced-motion:\s*reduce\)/g, "not all") : t);
   // the kit's stylesheet goes first, so styles/style.css can set the figures' tones (.iso[data-theme="light"])
-  const css = motion([has("anatomy/kit/iso.css") ? read("anatomy/kit/iso.css") : "", ...cfg.styles.map(read)].join("\n"));
+  const kitCss = has("anatomy/kit/iso.css") ? "/* Isometric figure styles from the Anatomy kit by Ryan, MIT licence, https://github.com/wheresryan22/anatomy */\n" + read("anatomy/kit/iso.css") : "";
+  const css = motion([kitCss, ...cfg.styles.map(read)].join("\n"));
   for (const n of cfg.scripts) if (!has(`src/js/${n}.js`)) errors.push(`src/js/${n}.js is listed in deck.config.json "scripts" but not found`);
   const consts = (presenter) => `const MOTION = ${JSON.stringify(full ? "full" : "respect")};\nconst CURRENCY = ${JSON.stringify(cfg.currency ?? "$")};\nconst HAS_PRESENTER = ${presenter};\nconst SCN = ${JSON.stringify(SCN)};\nconst LOGOS = ${JSON.stringify(LOGOS)};\n`;
   const deckJs = motion(cfg.scripts.filter((n) => has(`src/js/${n}.js`)).map((n) => read(`src/js/${n}.js`)).join("\n"));
   for (const m of deckJs.matchAll(/SCN\.([A-Za-z0-9_]+)/g)) if (!SCN[m[1]]) errors.push(`SCN.${m[1]} is used in a script but anatomy/scenes/${m[1]}.data.json does not exist (run its .mjs file)`);
-  for (const m of deckJs.matchAll(/H\.([A-Za-z0-9_]+)\s*=\s*\{/g)) if (!seen.has(m[1])) advice.push(`a script defines H.${m[1]} but no slide in the deck has that id`);
+  for (const m of deckJs.replace(/^\s*\/\/.*$/gm, "").matchAll(/\bH\.([A-Za-z0-9_]+)\s*=(?!=)/g)) if (!seen.has(m[1])) advice.push(`a script defines H.${m[1]} but no slide in the deck has that id`);
 
   const bodyTop = read("src/shell/body-top.html"), bodyBottom = read("src/shell/body-bottom.html");
   const body = (s) => bodyTop + s + bodyBottom;
@@ -118,7 +129,7 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
   const head = (fontsTag) => `<!doctype html>\n<html lang="${cfg.lang || "en"}">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n${cfg.noindex === false ? "" : '<meta name="robots" content="noindex,nofollow">\n'}<meta name="description" content="${esc(cfg.description || "")}">\n<title>${esc(cfg.title)}</title>\n${fontsTag}\n<style>${baseCss}</style>\n<style>\n${css}\n</style>\n</head>\n<body>\n`;
 
   // assets/… references become data URIs where everything must live in one file
-  const inlineAssets = (html) => html.replace(/(["'(])assets\/([^"')?#]+)/g, (all, q, f) => (has(`assets/${f}`) ? q + dataUri(rel(`assets/${f}`)) : all));
+  const inlineAssets = (html) => html.replace(/(["'(])assets\/([^"')?#]+)/g, (all, q, f) => (assetFile(f) && fs.existsSync(assetFile(f)) ? q + dataUri(assetFile(f)) : all));
 
   const web = head(localFonts ? '<link rel="stylesheet" href="fonts/fonts.css">' : googleFonts) + body(slides) + `<script>\n${consts(notes)}${deckJs}\n</script>\n</body>\n</html>\n`;
   const fontsCss = localFonts ? read("public/fonts/fonts.css").replace(/url\(([^)]+\.woff2)\)/g, (a, f) => `url(${dataUri(rel(`public/fonts/${f}`))})`) : "";
@@ -129,22 +140,38 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
   const presenter = notes && has("src/presenter/presenter.html") ? read("src/presenter/presenter.html").replace("/*PRESENTER_DATA*/", () => `const PRESENTER = ${JSON.stringify(PRESENTER).replace(/</g, "\\u003c")};`) : null;
 
   // ---------- write ----------
+  // The build never empties its output folder. It removes only the files its previous run wrote there (.deck-build.json),
+  // so an --out or DECK_OUT that points at a folder holding other things cannot delete them.
   const dist = out ? path.resolve(out) : process.env.DECK_OUT ? path.resolve(process.env.DECK_OUT) : rel("dist");
-  try { fs.rmSync(dist, { recursive: true, force: true }); } catch { /* some synced folders refuse deletes: files are overwritten instead */ }
+  const under = (dir, p) => p === dir || p.startsWith(dir + path.sep);
+  const refuse = (why) => { console.warn(`  ✗ the output folder ${dist} ${why}; choose another`); return { ok: false, errors: ["bad output folder"], advice, index }; };
+  // compared as real paths, so a symlinked name for the deck folder is caught too
+  const rDist = real(dist), rRoot = real(ROOT);
+  if (under(rDist, rRoot) || ["slides", "src", "styles", "tools", "assets", "public", "anatomy", "brand"].some((d) => under(real(rel(d)), rDist))) return refuse("is the deck itself or one of its source folders");
+  const manifest = path.join(dist, ".deck-build.json");
+  if (rDist !== real(rel("dist")) && fs.existsSync(dist) && fs.readdirSync(dist).length && !fs.existsSync(manifest)) return refuse("holds files this build did not write");
   fs.mkdirSync(dist, { recursive: true });
+  let previous = []; try { previous = JSON.parse(fs.readFileSync(manifest, "utf8")); } catch { /* the first build in this folder */ }
+  for (const f of Array.isArray(previous) ? previous : []) {
+    const p = typeof f === "string" ? path.resolve(dist, f) : dist;
+    if (p !== dist && under(dist, p)) try { fs.rmSync(p, { force: true }); } catch { /* not a file any more: leave it */ }
+  }
+  const written = [];
+  const put = (f, data) => { fs.writeFileSync(path.join(dist, f), data); written.push(f); };
   const copyDir = (from, to) => {
-    fs.mkdirSync(to, { recursive: true });
+    fs.mkdirSync(path.join(dist, to), { recursive: true });
     for (const e of fs.readdirSync(from, { withFileTypes: true })) {
       if (e.name.startsWith(".") || e.name.endsWith(".md")) continue;
       const a = path.join(from, e.name), b = path.join(to, e.name);
-      if (e.isDirectory()) copyDir(a, b); else fs.copyFileSync(a, b);
+      if (e.isDirectory()) copyDir(a, b); else { fs.copyFileSync(a, path.join(dist, b)); written.push(b); }
     }
   };
-  if (has("public")) copyDir(rel("public"), dist);
-  if (has("assets")) copyDir(rel("assets"), path.join(dist, "assets"));
-  fs.writeFileSync(path.join(dist, "index.html"), web);
-  fs.writeFileSync(path.join(dist, "offline.html"), offline);
-  if (presenter) fs.writeFileSync(path.join(dist, "presenter.html"), presenter);
+  if (has("public")) copyDir(rel("public"), "");
+  if (has("assets")) copyDir(rel("assets"), "assets");
+  put("index.html", web); put("offline.html", offline);
+  // a build without notes must not leave an earlier presenter window, which holds them, beside the page
+  if (presenter) put("presenter.html", presenter); else fs.rmSync(path.join(dist, "presenter.html"), { force: true });
+  fs.writeFileSync(manifest, JSON.stringify(written));
   fs.writeFileSync(rel("SLIDES.md"), ["# Slide index", "", "Generated by `npm run build` from deck.config.json. Edit the file in the last column.", "", "| # | Chapter | Title | Presses | File |", "|---|---|---|---|---|",
     ...index.map((s) => `| ${s.n} | ${s.chapter} | ${s.title.replace(/\|/g, "\\|")} | ${s.steps} | slides/${s.id}.html |`), ""].join("\n"));
 
@@ -155,7 +182,7 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
     console.log(`  ${d}/index.html      ${kb(web)}  (web)`);
     console.log(`  ${d}/offline.html    ${kb(offline)}  (single file${localFonts ? ", works offline" : ""})`);
     if (presenter) console.log(`  ${d}/presenter.html  ${kb(presenter)}  (presenter window, key P)`);
-    if (!notes) console.log("  speaker notes left out (--no-notes)");
+    console.log(notes ? "  speaker notes are inside these files: to share or publish, use npm run build:public" : "  speaker notes left out. Comments in src/js still ship with the page");
   }
   for (const p of errors) console.warn("  ✗ " + p);
   for (const p of advice) console.warn("  · " + p);

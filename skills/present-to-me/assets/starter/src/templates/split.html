@@ -1,8 +1,19 @@
 <!--
-  Template "split": a figure on one side (an anatomy scene, a photo, a product drawing) and one card on the other
-  whose content changes with each press.
+  Template "split": a 3D figure on one side and one card on the other. Each press shows one part of the figure:
+  the part lights up and lifts out, the card says what it is, and a dotted line joins the two.
   Use: node tools/new-slide.mjs <id> split
-  Place a generated scene with placeScene($('#newFig'), SCN.<name>) in the hook's enter().
+  1. Make the figure. Write anatomy/scenes/device.mjs with a preset (stack, laptop, phone, tower, rack, building, box, column:
+     see anatomy/scenes/presets.mjs). Two lines are enough:
+         import { laptop } from "./presets.mjs";
+         laptop({ name: "device" });
+     Run  node anatomy/scenes/device.mjs --audit  and the deck has the figure "device".
+  2. Put its name in data-scene. Until the figure exists, the slide shows a box that says which file to write.
+  3. Write one <template> per press. data-piece is a piece of the figure (the preset lists them), the text inside is the
+     one line on the card. Set data-steps on the slide to the number of templates.
+  On the element: data-list adds the list of parts above the card, data-side="left" puts the card on the left.
+  On a template: data-value and data-unit are the large figure (leave both out for none), data-tone="m2" lights the part in
+  another meaning colour, data-lift="1" moves it further out.
+  For a figure from the model, write the slide in JavaScript: H["id"] = pressHook(Kit.figure(box, scene, { card, parts })).
 -->
 <section class="slide" id="new-slide" data-title="Short title for the menu" data-steps="3">
   <div class="in">
@@ -10,9 +21,10 @@
       <p class="eyebrow"><span class="ch">00</span> Chapter</p>
       <h2 class="t">What it is made of, <em>part by part</em>.</h2>
     </div>
-    <div class="fill" style="display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:36px;align-items:center">
-      <div id="newFig" aria-label="Say what the figure shows"></div>
-      <div class="card raised" id="newCard"><span class="tag">1 · Part</span><h3>Name of the part</h3><p>One line on what it does.</p><p class="big">00<small> unit</small></p></div>
+    <div class="fill" data-kit="figure" data-scene="device">
+      <template data-piece="battery" data-tag="1 · Battery" data-h="What this part gives us" data-value="00" data-unit="unit">One line on what it does.</template>
+      <template data-piece="board" data-tag="2 · Board" data-h="What this part gives us" data-value="00" data-unit="unit">One line on what it does.</template>
+      <template data-piece="lid" data-tag="3 · Screen" data-h="What this part gives us" data-value="00" data-unit="unit">One line on what it does.</template>
     </div>
   </div>
   <p class="src">Where the numbers on this slide come from.</p><span class="pg"></span>

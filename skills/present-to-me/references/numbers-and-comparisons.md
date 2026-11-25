@@ -1,6 +1,6 @@
 # Numbers and comparisons
 
-A decision deck is trusted exactly as far as its numbers are. Read this before building any slide with money, options, payback or a calculator.
+Read this before building any slide with money, options, payback or sliders.
 
 ## One home for every number
 
@@ -21,7 +21,7 @@ Add a `set('key', value)` line in `recompute()` for each bound figure. Format in
 
 ## Labels that say what a number is
 
-Every figure on screen is one of four kinds, and the audience should be able to tell which.
+Every number on screen is one of four kinds, and the audience should be able to tell which.
 
 | Kind | How to show it |
 |---|---|
@@ -30,7 +30,7 @@ Every figure on screen is one of four kinds, and the audience should be able to 
 | Published by someone else | Plain, with the publisher and the date read |
 | Our estimate | Add "est." or "about" on the slide, and the reasoning in the notes |
 
-If a figure cannot be sourced, tell the user, and either leave it off or label it as an assumption. Never fill a gap with a plausible number. One invented figure, once found, discredits the measured ones around it.
+If a number cannot be sourced, tell the user, and either leave it off or label it as an assumption. Never fill a gap with a plausible number. An audience that finds one invented number stops believing the measured ones.
 
 When the presenter says a rounder number than the model computes, the slide shows the computed one and the notes say which is which.
 
@@ -88,13 +88,13 @@ The money slide in the example (`slides/money.html`, `H.money`) is the minimal f
 - Give a slider to every assumption the audience is likely to doubt, with a range that includes the pessimistic case.
 - Show the three or four results that matter as tiles: payback, total saved, what we pay.
 - Compare the result with the organisation's own rule ("inside our 7-year rule") and turn it red when it fails.
-- Add a Reset button. Presenters wander.
+- Add a Reset button.
 - Every later slide that shows money must follow the calculator. In the example the approval page and the third test box listen for `model`.
 - Prepare two or three moves in the notes in square brackets: "[Set the price rise to zero: owning still ends ahead.]". The presenter then uses the calculator to answer doubt instead of exploring it live.
 
 ## Sensitivity
 
-One slide answers "what if you are wrong?". Run the same model with one input changed (a higher price, a year's delay, zero growth) and draw the results on one chart with a ring at each break-even. Say in the notes which input moves the answer most. If no reasonable value of any input reverses the recommendation, say that sentence aloud. It is the strongest line in the deck.
+One slide answers "what if you are wrong?". Run the same model with one input changed (a higher price, a year's delay, zero growth) and draw the results on one chart with a ring at each break-even. Say in the notes which input moves the answer most. If no reasonable value of any input reverses the recommendation, say that sentence aloud.
 
 A scenario value you pick yourself is a new number with no source. Prefer the break-even, which is computed: "it still passes our rule until the efficiency falls to 1.6" needs no assumption. If you do show a picked case, label it on the slide as yours ("our cautious case"), and list it with the assumptions.
 

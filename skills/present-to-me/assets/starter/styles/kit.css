@@ -1,0 +1,12 @@
+/* ===== Kit: the parts of src/js/kit.js that are HTML, and the appendix page that shows every component ===== */
+svg.kit-svg { display: block; width: 100%; height: auto; overflow: hidden }
+.kit-num { display: flex; flex-direction: column; gap: 12px }
+.kit-num .kit-num-v { margin: 0 }
+.kit-num-line { font: 500 24px/1.35 var(--f-body); color: var(--fg-3); max-width: 28ch }
+
+/* a card that holds one component: tag, then the drawing filling the rest */
+.kit-card { padding: 22px 26px 20px; gap: 12px; border-radius: 22px; min-height: 0 }
+.kit-card svg.kit-svg { flex: 1; min-height: 0; height: 100% }
+.kit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 22px }
+.kit-grid .kit-num { justify-content: center; flex: 1 }
+.kit-grid .kit-num .big { font-size: 84px }

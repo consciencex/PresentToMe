@@ -88,7 +88,7 @@ The appendix renders it by group with the slide numbers. Adding the slide ids is
 - Quote prices and limits with the date you read them. They change.
 - Separate what the source states from what you infer. "The vendor states X. We conclude Y." If the conclusion is yours, the slide must not put it in the vendor's mouth.
 - When a source does not state something the story needs, the slide says "to confirm" or "to test", and the notes say who will confirm it and when.
-- Keep private sources private. A quote or an internal report is cited by name and date with no link, and it is left out of any public build.
+- Keep private sources private. A quote or an internal report is cited by name and date with no link. The sources page is part of the deck, so before a public build, read it and remove what should not be public. No tool does this for you.
 
 ### Notes for hard questions
 
@@ -98,4 +98,4 @@ Anything the presenter may be challenged on goes in the notes in square brackets
 <p data-press="2">… [If asked: the vendor never says the basic tier runs an older model. "Mid-tier" is our shorthand.]</p>
 ```
 
-The slide stays simple, and the presenter is covered.
+The slide stays simple, and the presenter has the answer ready.

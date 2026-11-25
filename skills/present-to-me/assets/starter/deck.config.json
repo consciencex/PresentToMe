@@ -4,16 +4,79 @@
   "lang": "en",
   "currency": "$",
   "motion": "full",
-  "brand": { "name": "Harbor Foods", "logo": "brand/logo.svg" },
-  "fonts": { "google": "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" },
-  "styles": ["styles/style.css", "styles/slides.css", "styles/slides-charts.css", "styles/slides-anatomy.css"],
-  "scripts": ["engine", "presenter-link", "iso", "model", "sources", "hooks-open", "hooks-charts", "hooks-anatomy", "hooks-money", "hooks-appendix", "main"],
+  "brand": {
+    "name": "Example Foods",
+    "logo": "brand/logo.svg"
+  },
+  "fonts": {
+    "google": "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+  },
+  "styles": [
+    "styles/style.css",
+    "styles/kit.css",
+    "styles/slides.css",
+    "styles/slides-charts.css",
+    "styles/slides-anatomy.css"
+  ],
+  "scripts": [
+    "engine",
+    "presenter-link",
+    "iso",
+    "model",
+    "sources",
+    "kit",
+    "kit-figure",
+    "hooks-open",
+    "hooks-charts",
+    "hooks-anatomy",
+    "hooks-money",
+    "hooks-appendix",
+    "hooks-kit",
+    "main"
+  ],
   "chapters": [
-    { "title": "Open", "num": null, "slides": ["film", "title"] },
-    { "title": "Why now", "num": "01", "slides": ["pressures", "options"] },
-    { "title": "Does it fit us", "num": "02", "slides": ["tests", "anatomy", "day"] },
-    { "title": "Decision", "num": "03", "slides": ["money", "decision"] },
-    { "title": "Appendix", "num": "A", "slides": ["qa", "sources"] }
+    {
+      "title": "Open",
+      "num": null,
+      "slides": [
+        "film",
+        "title"
+      ]
+    },
+    {
+      "title": "Why now",
+      "num": "01",
+      "slides": [
+        "pressures",
+        "options"
+      ]
+    },
+    {
+      "title": "Does it fit us",
+      "num": "02",
+      "slides": [
+        "tests",
+        "anatomy",
+        "day"
+      ]
+    },
+    {
+      "title": "Decision",
+      "num": "03",
+      "slides": [
+        "money",
+        "decision"
+      ]
+    },
+    {
+      "title": "Appendix",
+      "num": "A",
+      "slides": [
+        "qa",
+        "sources",
+        "kit"
+      ]
+    }
   ],
   "eyebrowTags": {}
 }

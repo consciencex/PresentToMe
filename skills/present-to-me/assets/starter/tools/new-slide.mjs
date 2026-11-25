@@ -16,4 +16,4 @@ const ch = chapter ? cfg.chapters.find((c) => c.title === chapter) : body[body.l
 if (!ch) { console.error(`no chapter titled "${chapter}"`); process.exit(1); }
 ch.slides.push(id);
 fs.writeFileSync(cfgFile, JSON.stringify(cfg, null, 2) + "\n");
-console.log(`created slides/${id}.html from "${tpl}" in chapter "${ch.title}". Its behaviour goes in src/js/ as H["${id}"] = { enter, step, leave }.`);
+console.log(`created slides/${id}.html from "${tpl}" in chapter "${ch.title}". Draw it in src/js/ with a hook:  H["${id}"] = pressHook({ build, settle, play })  (references/motion-and-interaction.md).`);

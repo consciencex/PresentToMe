@@ -212,6 +212,9 @@
   let day;
   function buildDay(s) {
     const svg = s.querySelector('#dyChart'); svg.replaceChildren();
+    // the building from the slide before, small, with only the roof lit: it carries the eye from the parts to what they produce
+    const fig = s.querySelector('#dyFig');
+    if (!fig.firstChild) placeScene(fig, SCN.system).querySelectorAll('[data-piece="panels"] .iso-solid').forEach(e => e.setAttribute('data-lit', ''));
     const L = DAY.load, S = DAY.sun, n = L.length;
     const x0 = 96, x1 = 1150, base = 500, top = 56;
     const ymax = Math.ceil(Math.max(...L) * 1.08 / 200) * 200, stepY = niceStep(ymax, 4);

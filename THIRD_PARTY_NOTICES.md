@@ -12,11 +12,11 @@ The starter deck vendors a subset of the Anatomy kit to draw its isometric figur
 
 Source: https://github.com/wheresryan22/anatomy. Copyright (c) 2026 Ryan. MIT License. The full licence text is in `skills/present-to-me/assets/starter/anatomy/KIT-LICENSE` and travels with every deck made from the starter.
 
-Anatomy is a complete agent skill for detailed isometric illustration. For figures beyond the simple scenes this starter shows, install and use it directly.
+Anatomy is a complete agent skill for detailed isometric illustration. For figures beyond the presets and simple scenes this starter shows, look at Anatomy itself.
 
 ## Typefaces
 
-The starter loads Archivo, IBM Plex Sans and IBM Plex Mono from Google Fonts at run time. They are licensed under the SIL Open Font License 1.1. No font files are stored in this repository. `npm run fonts` downloads them into a deck for offline use. Check each family's licence before redistributing those files.
+The starter loads Archivo, IBM Plex Sans and IBM Plex Mono from Google Fonts at run time, and IBM Plex Sans Thai for a deck made with `--lang th`. They are licensed under the SIL Open Font License 1.1. No font files are stored in this repository. `npm run fonts` downloads them into a deck for offline use. Check each family's licence before redistributing those files.
 
 ## Logos
 

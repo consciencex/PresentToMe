@@ -1,5 +1,5 @@
 /* ===== The model: every number the deck shows comes from here. =====
-   EXAMPLE DATA. Harbor Foods is invented and so is every figure below; replace them with numbers you can source.
+   EXAMPLE DATA. Example Foods is invented and so is every figure below; replace them with numbers you can source.
    A slide never types a number the model also knows: it binds to it (data-bind="key") or reads MODEL in its hook,
    so one edit here, or one slider on the money slide, changes every slide that depends on it. */
 const INPUT = {
@@ -8,6 +8,7 @@ const INPUT = {
   cover: 0.26,          // share of our use the roof supplies (800 kWp on this roof)
   ppaDiscount: 0.15,    // option B: a supplier owns the panels and sells us their power this much below the grid price
   capex: 720000,        // option C: we buy the system (800 kWp at $0.90 a watt)
+  perWatt: 0.9,         // installed price, $ a watt, from the installer's quote
   omYear: 9000,         // option C: cleaning, monitoring, inverter reserve, a year
   years: 15,
 };

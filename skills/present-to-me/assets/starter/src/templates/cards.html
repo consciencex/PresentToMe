@@ -1,7 +1,7 @@
 <!--
   Template "cards": two to four parallel reasons, each made concrete by one drawing. The house style of the deck.
   Use: node tools/new-slide.mjs <id> cards
-  One card per press. Draw each <svg> in a hook (src/js/hooks-*.js): H["<id>"] = { enter, step(s, k), leave }.
+  One card per press. Draw each <svg> in a hook in src/js/: H["<id>"] = pressHook({ build, settle, play }).
 -->
 <section class="slide" id="new-slide" data-title="Short title for the menu" data-steps="3">
   <div class="in">

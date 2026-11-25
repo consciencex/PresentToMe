@@ -1,0 +1,42 @@
+<section class="slide" id="choose" data-title="Your own week" data-steps="0">
+  <div class="in ch-in">
+    <div class="hd">
+      <p class="eyebrow"><span class="ch">02</span> Which is yours</p>
+      <h2 class="t">Which one does your own week pick?</h2>
+    </div>
+    <div class="ch-row fill">
+      <div class="card raised ch-card no-swipe" id="chInputs">
+        <span class="tag">Your week</span>
+        <label class="ch-line"><span>Heavy work<small>a week</small></span><input type="range" data-k="heavyHours" min="0" max="10" step="0.5"><output></output></label>
+        <label class="ch-line"><span>Away from a desk<small>a week</small></span><input type="range" data-k="awayDays" min="0" max="7" step="1"><output></output></label>
+        <label class="ch-line"><span>An hour of waiting<small>is worth</small></span><input type="range" data-k="hourValue" min="5" max="60" step="5"><output></output></label>
+        <label class="ch-line"><span>Your budget<small>at most</small></span><input type="range" data-k="budget" min="1200" max="2600" step="50"><output></output></label>
+        <div class="ch-foot">
+          <p>The <b class="m2">Studio 15</b> is yours when it passes both tests.</p>
+          <button type="button" class="ch-reset" id="chReset">Reset</button>
+        </div>
+      </div>
+      <div class="ch-out">
+        <div class="card raised ch-verdict">
+          <div class="ch-figs">
+            <div class="vs-fig" data-fig="a" data-morph="fig-a"></div>
+            <div class="vs-fig" data-fig="b" data-morph="fig-b"></div>
+          </div>
+          <div class="ch-say" aria-live="polite">
+            <span class="tag">For this week</span>
+            <p class="ch-name" id="chName"></p>
+            <p class="ch-why" id="chWhy"></p>
+            <p class="ch-cost" id="chCost"></p>
+          </div>
+        </div>
+        <div class="ch-tests">
+          <div class="card raised ch-test"><span class="tag">Test 1 · Does it fit the budget?</span><svg class="vs-chart" id="chBudget"></svg></div>
+          <div class="card raised ch-test"><span class="tag">Test 2 · Does it earn back its price?</span><svg class="vs-chart" id="chPay"></svg><p class="ch-pay">payback <b data-bind="payback" data-morph="payback"></b></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="src">Example data. Every value is computed live by the deck model from the four inputs shown. The defaults are the case drawn on the cost slide.</p>
+  <span class="pg"></span>
+  <aside class="notes"><h4>Your own week</h4><p>These are the four numbers behind the last chart, and they are yours to move. The rule has two tests. The Studio 15 is your laptop when it fits your budget and pays back while you still own it. If it fails either test, the Light 13 is.</p><p>[Drag heavy work to zero. The Studio 15 never pays back.] [Drag the days away from a desk to six. The pick turns to the Light 13, because on battery the Studio 15 saves no time.] [Drag an hour of waiting down to its lowest value. The payback moves past the years you keep it.] [Pull the budget under the price of the Studio 15. Test 1 fails, whatever the payback is.] Whatever we leave on this slide, the last slide uses.</p></aside>
+</section>

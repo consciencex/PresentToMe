@@ -1,7 +1,7 @@
 {
   "name": "present-to-me",
-  "version": "1.0.0",
-  "description": "The storytelling method of Wai (Suppanimit Meemungkit) as an agent skill: explain hard things simply with interactive presentations. Grill with me interview, martini glass story, raised cards, meaningful colour, animation, drawn visuals, 3D anatomy, live parameters.",
+  "version": "1.1.0",
+  "description": "The storytelling method of Wai (Suppanimit Meemungkit) as an agent skill: explain hard things simply with interactive presentations. Starts from a finished deck of the right kind (explainer, versus, decision), with a Grill with me interview, the martini glass story, raised cards, meaningful colour, motion on every press, chart components, 3D anatomy, live parameters and morph continuity between slides.",
   "author": {
     "name": "Suppanimit Meemungkit (Wai)"
   },
@@ -9,13 +9,15 @@
   "repository": "https://github.com/consciencex/PresentToMe",
   "license": "MIT",
   "keywords": [
-    "presentation",
-    "slides",
+    "agent-skill",
+    "animation",
+    "data-visualization",
     "deck",
-    "storytelling",
     "html",
     "isometric",
-    "data-visualization",
-    "agent-skill"
+    "morph",
+    "presentation",
+    "slides",
+    "storytelling"
   ]
 }

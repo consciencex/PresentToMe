@@ -13,7 +13,11 @@ Each of these happened on a real deck. Read the list once before the final check
 | A utilisation bar on one slide showed different shares from the chart that defined them. | Draw both from one array. Never retype a figure. |
 | A slide still described last month's decision after the plan changed. | When a decision changes, search every slide, note and script for the old fact. Keep a "facts that changed" list in `DECK.md`. |
 | The spoken script kept old numbers after the slides moved on. | Update notes and script in the same edit as the slide. |
-| The ask showed an amount the room had not seen before. | Every figure on the ask appears on an earlier slide and comes from the same variable. |
+| The ask showed an amount the room had not seen before. | Every number on the ask appears on an earlier slide and comes from the same variable. |
+| An agent given only a topic built eight slides of text in boxes: no chart drawn, no figure, no motion beyond a fade. | Start from the deck of the right kind (`new-deck.mjs --kind`) and retell it. Keep each slide's layout and hook, and change its data. `npm run check` measures the bar and fails a deck that lost the kit. |
+| An agent kept the example's slides and changed only a few words, so half the deck was about the example's subject. | The check fails while a slide still carries the example's title. Retell every slide or cut it. |
+| An agent replaced the stylesheet with its own design: dark slides and product photos. | Keep the house style. A brand changes tokens, typeface and logo. See visual-style.md. |
+| Two related slides cut from one to the other, and the audience lost the object they were following. | Carry it across with `data-morph`. |
 
 ## Layout
 
@@ -65,7 +69,7 @@ Each of these happened on a real deck. Read the list once before the final check
 |---|---|
 | A new figure rendered blank. | Its data file was missing or stale. Run the scene file, then build. The build reports a missing `SCN` name. |
 | The first camera showed the back of the object. | Preview at several azimuths before placing it. The face that tells the story must lead. |
-| The same figure appeared on two slides. | Draw a second scene from another angle or at another scale. |
+| The same figure appeared at the same size on two slides far apart, and the second read as a repeat. | On the next slide, carry it across with `data-morph` at a new size and in a new role. Further on, draw a second scene from another angle. |
 | A part drawn on top of another in the same piece was sorted behind it. | Draw it as an extra of the base part, not as its own item. |
 | A lit figure looked flat. | Light only the part the slide is about and keep the rest neutral. |
 
@@ -79,7 +83,9 @@ Each of these happened on a real deck. Read the list once before the final check
 | A dev server started before a tool change kept the old build code in memory. | Restart `npm run dev` after editing anything in `tools/`. |
 | A QR code pointed at the wrong address. | Decode it after generating it. |
 | The published page was not the build that was tested. | After deploying, fetch the live page and compare it with the local build. |
-| Speaker notes with a private remark were visible in the page source of a public link. | `--no-notes` for public builds. |
+| Speaker notes with a private remark were visible in the page source of a public link. | `npm run build:public` for anything other people will open. |
+| A build without notes got its notes back: the check and the screenshot tool rebuild `dist/` with notes. | The public build has its own folder, `public-build/`, which no other tool writes. Publish only that. |
+| A scaffold command with an overwrite flag replaced files in an existing project. | `new-deck.mjs` writes only into a new or empty folder. |
 | A secret was pasted into a note or a log. | Secrets live in `.env.local` only. |
 | A later session undid an earlier decision. | Log each decision in `DECK.md` with the date and the user's words, and read it first. |
 | Generated files were edited by hand. | `dist/`, `SLIDES.md` and `*.data.json` are outputs. Edit their sources. |

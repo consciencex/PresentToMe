@@ -13,3 +13,11 @@ export async function loadChromium() {
 }
 // where the build goes: dist/, or the folder named by DECK_OUT (so two checks can run at once without sharing dist/)
 export const outDir = (root) => (process.env.DECK_OUT ? path.resolve(process.env.DECK_OUT) : path.join(root, "dist"));
+
+// the file a request names inside root. null for a malformed path and for one that climbs out of root
+export function fileFor(root, reqUrl) {
+  let p;
+  try { p = decodeURIComponent(String(reqUrl).split("?")[0]); } catch { return null; }
+  const f = path.resolve(root, "." + path.posix.normalize("/" + p));
+  return f === root || f.startsWith(root + path.sep) ? f : null;
+}

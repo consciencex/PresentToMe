@@ -1,0 +1,33 @@
+<section class="slide" id="tryit" data-title="Does it get your house through the evening?" data-steps="0">
+  <div class="in ty-in">
+    <div class="ty-top">
+      <div class="hd">
+        <p class="eyebrow"><span class="ch">03</span> Your house</p>
+        <h2 class="t">Does it get your house through the <span class="p">evening</span>?</h2>
+      </div>
+      <div class="ty-tiles">
+        <div class="ty-tile"><span class="tag">Battery full by</span><b data-bind="fullAt"></b><small>on a clear day</small></div>
+        <div class="ty-tile"><span class="tag">Evening off the grid</span><b class="m1" data-bind="covered" data-morph="covered"></b><small><span data-bind="eveningFrom"></span> to midnight</small></div>
+        <div class="ty-tile"><span class="tag">Day from the roof</span><b data-bind="ownShare"></b><small>with the battery</small></div>
+      </div>
+    </div>
+    <div class="ty-row fill">
+      <div class="card raised ty-inputs no-swipe" id="tyInputs">
+        <label class="ty-line"><span class="tag">Evening use · <span data-bind="eveningFrom"></span> to midnight</span><output class="m3"></output><input type="range" class="m3" data-k="evening" data-unit="kWh" min="4" max="16" step="0.5"></label>
+        <label class="ty-line"><span class="tag">Battery size · what it holds</span><output class="m1"></output><input type="range" data-k="capacity" data-unit="kWh" min="4" max="20" step="1"></label>
+        <p class="ty-verdict" aria-live="polite"><span class="chip" id="tyChip"><i></i><span></span></span><span id="tyText"></span></p>
+        <div class="ty-foot"><button type="button" class="ty-reset" id="tyReset">Reset</button></div>
+      </div>
+      <div class="card raised ty-chart">
+        <div class="dy-head">
+          <span class="tag">The same clear day, with your numbers</span>
+          <span class="legend"><span><i class="m1"></i>from the roof or the battery</span><span><i class="m2"></i>from the grid</span></span>
+        </div>
+        <svg id="tyChart" viewBox="0 0 1050 590" aria-label="The same clear day in three rows, redrawn for the evening use and the battery size set on the left. The battery row shows when it is full and when it runs out, and blue in the house row is power from the grid"></svg>
+      </div>
+    </div>
+  </div>
+  <p class="src">Example data. Every value is computed live by the deck model (src/js/model.js) from the two sliders, for one clear day at an invented house.</p>
+  <span class="pg"></span>
+  <aside class="notes"><h4>Try it</h4><p>Now your house. Two sliders. Evening use is what your house takes from early evening to midnight. Battery size is what the cabinet holds. The picture is the same clear day as before, and the three tiles are the answers.</p><p>[Drag evening use to 14, the winter evening from the last slide. The battery runs out before ten and blue appears in the bottom row.] [Now drag battery size to 16. It lasts again.] [Reset.] Whatever we leave here, the last slide uses it.</p></aside>
+</section>

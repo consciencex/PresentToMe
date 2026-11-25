@@ -7,12 +7,15 @@ import { ROOT } from "./build.mjs";
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "deck.config.json"), "utf8"));
 const url = cfg.fonts?.google;
 if (!url) { console.error('deck.config.json has no "fonts": { "google": "https://fonts.googleapis.com/css2?…" }'); process.exit(1); }
+// only Google Fonts is fetched: the stylesheet from fonts.googleapis.com, the font files from fonts.gstatic.com
+const host = (u) => { try { const x = new URL(u); return x.protocol === "https:" ? x.hostname : ""; } catch { return ""; } };
+if (host(url) !== "fonts.googleapis.com") { console.error(`"fonts.google" must be a https://fonts.googleapis.com/css2 link. It is: ${url}`); process.exit(1); }
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";   // a current browser gets woff2
 const res = await fetch(url, { headers: { "User-Agent": UA } });
 if (!res.ok) { console.error(`Google Fonts answered ${res.status}`); process.exit(1); }
 let css = await res.text();
 const dir = path.join(ROOT, "public/fonts"); fs.mkdirSync(dir, { recursive: true });
-const files = [...new Set([...css.matchAll(/url\((https:[^)]+\.woff2)\)/g)].map((m) => m[1]))];
+const files = [...new Set([...css.matchAll(/url\((https:[^)]+\.woff2)\)/g)].map((m) => m[1]))].filter((f) => host(f) === "fonts.gstatic.com");
 let n = 0;
 for (const f of files) {
   const name = `f${String(++n).padStart(2, "0")}.woff2`;

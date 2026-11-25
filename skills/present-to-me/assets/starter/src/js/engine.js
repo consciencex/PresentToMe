@@ -43,14 +43,19 @@ const Deck = {
     i = clamp(i, 0, this.slides.length - 1);
     if (step === 'end') step = this.maxStep(this.slides[i]);
     const prev = this.slides[this.i];
+    Morph.stop();
+    const carried = !instant && !REDUCED && Math.abs(i - this.i) === 1 ? Morph.snapshot(prev) : null;
     if (i !== this.i || instant) {
       if (prev && prev !== this.slides[i]) { prev.classList.remove('is-active'); this.call(prev, 'leave'); }
       this.i = i; const cur = this.slides[i];
       cur.classList.add('is-active');
       this.step = step;
+      // a slide left at a later press comes back at press 0: its revealed elements go back at once, not as a fade seen through the arriving slide
+      cur.classList.add('is-entering'); requestAnimationFrame(() => cur.classList.remove('is-entering'));
       this.applySteps(cur);
       this.call(cur, 'enter');
       this.call(cur, 'step', this.step);
+      if (carried) Morph.run(carried, cur);
     } else {
       this.step = step; this.applySteps(this.slides[i]); this.call(this.slides[i], 'step', this.step);
     }
@@ -137,6 +142,65 @@ const Deck = {
   toStage(cx, cy) { const r = this.stage.getBoundingClientRect(); return { x: (cx - r.left) / this.scale, y: (cy - r.top) / this.scale }; }
 };
 
+/* ---------- morph: continuity between neighbouring slides ----------
+   An element with data-morph="name" on two neighbouring slides is one thing in two places. When the deck moves between
+   the two slides, a copy travels from its place on the slide being left to its place on the slide being entered, and the
+   two versions cross-fade near the end, so the audience sees the object carried into its next context.
+   It runs between neighbours only (next or back, never a jump from the menu). The element must be an HTML element or a
+   whole <svg>. The copy keeps its own classes but leaves its slide, so do not style it through the slide's id. */
+const Morph = {
+  seconds: .9, live: [],
+  // What has to coincide when the move ends. A number or a word (text with no element inside) is measured by its text,
+  // and a box that holds one figure by the figure, so each lands exactly on its arriving version whatever the boxes around them do.
+  core(el) {
+    if (!el.children.length && el.textContent.trim()) { const t = document.createRange(); t.selectNodeContents(el); return { r: t.getBoundingClientRect(), words: true }; }
+    const figs = el.querySelectorAll('.iso');
+    return { r: (figs.length === 1 ? figs[0].querySelector('svg') || figs[0] : el).getBoundingClientRect(), words: false };
+  },
+  snapshot(slide) {
+    const m = {};
+    for (const el of slide.querySelectorAll('[data-morph]')) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 2 && r.height > 2 && getComputedStyle(el).visibility !== 'hidden') m[el.dataset.morph] = { el, r, core: this.core(el) };
+    }
+    return m;
+  },
+  stop() { this.live.splice(0).forEach(cancel => cancel()); },
+  run(from, slide) {
+    const st = Deck.stage.getBoundingClientRect(), k = Deck.scale, at = r => [(r.left - st.left) / k, (r.top - st.top) / k];
+    const TYPE = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontStretch', 'fontVariantNumeric', 'letterSpacing', 'textAlign', 'whiteSpace', 'color'];
+    const BOX = ['lineHeight', 'background', 'border', 'borderRadius', 'boxShadow', 'padding'];
+    for (const to of slide.querySelectorAll('[data-morph]')) {
+      const f = from[to.dataset.morph]; if (!f) continue;
+      const box = to.getBoundingClientRect(); if (box.width < 2 || box.height < 2) continue;
+      const tc = this.core(to), words = f.core.words && tc.words, alike = f.core.words === tc.words;
+      const c0 = alike ? f.core.r : f.r, c1 = alike ? tc.r : box, stand = words ? c0 : f.r;
+      const ghost = f.el.cloneNode(true), cs = getComputedStyle(f.el), ct = getComputedStyle(to);
+      ['data-morph', 'data-bind', 'id', 'data-s'].forEach(n => ghost.removeAttribute(n)); ghost.classList.remove('is-on');
+      // the copy leaves its parent, so it carries the look its parent gave it. The font shorthand is empty when the stretch is a percentage: copy the parts
+      (words ? TYPE : [...TYPE, ...BOX]).forEach(p => ghost.style[p] = cs[p]);
+      const [gx, gy] = at(stand), [x0, y0] = at(c0), [x1, y1] = at(c1), ox = x0 - gx, oy = y0 - gy;
+      Object.assign(ghost.style, { position: 'absolute', left: gx + 'px', top: gy + 'px', margin: 0, zIndex: 40, pointerEvents: 'none', transformOrigin: '0 0', transition: 'none', opacity: 1, transform: 'none', boxSizing: 'border-box' },
+        words ? { display: 'block', whiteSpace: 'nowrap', lineHeight: c0.height / k + 'px', padding: 0, background: 'none', border: 0 } : { width: f.r.width / k + 'px', height: f.r.height / k + 'px' });
+      Deck.stage.appendChild(ghost);
+      const keep = [f.el.style.visibility, to.style.opacity, to.style.transition];
+      f.el.style.visibility = 'hidden'; to.style.transition = 'none'; to.style.opacity = 0;
+      // a box stretches to the arriving box. Words keep their shape: one scale, and the weight, width and colour change on the way
+      const sy = c1.height / c0.height, sx = words ? sy : c1.width / c0.width, swapAt = words ? .8 : .55;
+      const type = words && ghost.animate ? ghost.animate(['color', 'fontWeight', 'fontStretch'].reduce((fr, p) => (fr[0][p] = cs[p], fr[1][p] = ct[p], fr), [{}, {}]),
+        { duration: this.seconds * 1000, easing: 'cubic-bezier(.65, 0, .35, 1)', fill: 'forwards' }) : null;
+      const end = () => { type && type.cancel(); ghost.parentNode && ghost.parentNode.removeChild(ghost); f.el.style.visibility = keep[0]; to.style.opacity = keep[1]; to.style.transition = keep[2]; };
+      const tw = tween(this.seconds, t => {
+        const e = ease(t), swap = clamp((t - swapAt) / (1 - swapAt), 0, 1), a = lerp(1, sx, e), b = lerp(1, sy, e);
+        ghost.style.transform = `translate(${lerp(x0, x1, e) - gx - a * ox}px, ${lerp(y0, y1, e) - gy - b * oy}px) scale(${a}, ${b})`;
+        ghost.style.opacity = 1 - swap; to.style.opacity = swap;
+      }, () => { this.live = this.live.filter(c => c !== cancel); end(); });
+      const cancel = () => { tw.stop(); end(); };
+      this.live.push(cancel);
+    }
+  }
+};
+
 /* stage tooltip */
 const Tip = {
   el: null,
@@ -148,10 +212,13 @@ function bindTip(node, htmlFn) {
   node.addEventListener('pointerleave', () => Tip.hide());
 }
 
-/* animation loop helper: runs only while its slide is active */
+/* animation loop helper: a loop that is left running stops by itself once its slide is off screen */
 function loopOn(slideId, fn) {
   let raf = null, t0 = 0;
-  const tick = now => { if (!t0) t0 = now; fn((now - t0) / 1000); raf = requestAnimationFrame(tick); };
+  const tick = now => {
+    if (Deck.slides[Deck.i].id !== slideId) { raf = null; return; }
+    if (!t0) t0 = now; fn((now - t0) / 1000); raf = requestAnimationFrame(tick);
+  };
   return {
     start() { if (raf) return; t0 = 0; raf = requestAnimationFrame(tick); },
     stop() { if (raf) cancelAnimationFrame(raf); raf = null; }

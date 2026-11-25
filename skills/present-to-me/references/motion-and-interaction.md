@@ -4,13 +4,13 @@ How slides move and respond. Read this before writing a hook.
 
 ## Two ways to reveal
 
-**Without code.** Give the section `data-steps="N"` and any element `data-s="k"`. The element appears from press k (the engine adds `.is-on`, and CSS fades it up over .55 s). Add class `fade` for a fade without the rise. `data-dim="k"` with class `dim-later` dims an element from press k. This covers cards, tiles, takeaways and anything that only needs to appear.
+**Without code.** Give the section `data-steps="N"` and any element `data-s="k"`. The element appears from press k (the engine adds `.is-on`, and CSS fades it up over .55 s). Add class `fade` for a fade without the rise. On an element that already has `data-s`, `data-dim="k"` with class `dim-later` dims it from press k. This covers cards, tiles, takeaways and anything that only needs to appear.
 
-**With a hook.** For drawings, animation and live numbers, define a hook in a `src/js/hooks-*.js` file:
+**With a hook.** For drawings, animation and live numbers, define a hook in `src/js/hooks.js` (or any `src/js/hooks-*.js` file listed in the config):
 
 ```js
 H.myslide = {
-  enter(s) { },        // the slide became active: build once, start loops
+  enter(s) { },        // the slide became active: build from the model, start loops
   step(s, k) { },      // press k is now current (called after enter, and on every press)
   leave(s) { },        // the slide is no longer active: stop loops and timers
 };
@@ -24,10 +24,11 @@ The engine calls `step(s, k)`:
 
 - after `enter`, with k = 0 when arriving forwards;
 - after `enter`, with k = the last press when arriving backwards from the next slide;
-- with any k when someone jumps from the menu, reloads the page, or the check walks the deck;
+- with k = 0 when someone jumps from the menu or reloads the page;
+- with any k when the check walks the deck or a script calls `Deck.go(i, k)`;
 - with k − 1 when the presenter steps back.
 
-So a hook must be able to show press k from nothing. The engine provides `pressHook` for exactly this. Use it for every slide with presses:
+So a hook must be able to show press k from nothing. The engine provides `pressHook` for this. Use it for every slide with presses:
 
 ```js
 (function () {                         // one function scope per file: every script shares one global scope
@@ -62,6 +63,8 @@ So a hook must be able to show press k from nothing. The engine provides `pressH
 | `F(weight, size, color, family)` | A style string for SVG text: `txt(g, x, y, 'Own', { style: F(600, 20, C['m1-ink']) })` |
 | `C['m1']`, `C['fg-3']` | The resolved value of a CSS token, for SVG attributes |
 | `pressHook({ build, settle, play, leave })` | The standard hook for a slide with presses (above) |
+| `Kit.bars`, `Kit.versus`, `Kit.lines`, … | Ready-made animated charts. Each returns `set(t)`. See [kit-components.md](kit-components.md) |
+| `Kit.figure(box, scn, { parts, card })` | A 3D figure explained one part per press. Returns `{ settle, play }` |
 | `tween(seconds, fn(t), done)` | Calls `fn` with t from 0 to 1. Returns `{ stop }` |
 | `loopOn(id, fn(seconds))` | A frame loop. Returns `{ start, stop }` |
 | `ease`, `easeOut`, `lerp`, `clamp`, `linear(d0, d1, r0, r1)` | Easing and scales |
@@ -88,7 +91,7 @@ Typical timings:
 | A line drawing in | 1.4 s, `ease`. Its end label fades in at 1.2 s, crossing rings at 1.3 s |
 | Bars growing | 1 s, `easeOut`, staggered |
 | A count-up | 1.2 s |
-| A figure assembling | 1.2 to 1.4 s, `easeOut` |
+| A figure assembling | 1.2 to 1.8 s, `ease` or `easeOut` |
 | A camera move or a lift | .6 to .85 s, `ease` |
 | A stamp or a tick landing | .3 s with a spring, `cubic-bezier(.3,1.6,.5,1)` |
 | Stagger between cards | 120 ms. Between auto-ticks, 650 ms |
@@ -124,7 +127,28 @@ function build() {
 - Keys are handled by the engine. They are ignored while focus is in an input (Esc leaves it) and while a modifier key is down.
 - A modal sets `Deck.modal = { close, toggle }` when it opens and `null` when it closes. While set, Esc closes it, Space calls `toggle`, and the slide keys do nothing.
 
-## A hand-off between two slides
+## Carrying an element to the next slide
+
+Give the same `data-morph` name to one element on each of two neighbouring slides.
+
+```html
+<!-- slides/anatomy.html -->                          <!-- slides/day.html -->
+<div id="anFig" data-morph="site"></div>              <div id="dyFig" data-morph="site"></div>
+```
+
+When the deck moves from one slide to the other, forwards or backwards, the engine copies the element where it stands and moves the copy to the element's place on the arriving slide over 0.9 s. The slides cross-fade underneath. No code is needed.
+
+- **A number or a word** (an element that holds only text) keeps its shape. It scales by one factor, changes weight, width and colour on the way, and lands exactly on the arriving text.
+- **A box** (a figure, a card, a chart) stretches to the arriving box, and the two versions cross-fade over the second half.
+
+- It runs between neighbours only. A jump from the menu shows no morph.
+- The element must be an HTML element or a whole `<svg>`, visible when the slide is left and present when the next slide appears. A part inside an SVG cannot travel alone.
+- The two versions may differ in size and in detail. They should be the same thing. The cross-fade hides small differences, and large ones look like a mistake.
+- The travelling copy leaves its slide. Style the element with classes, since a rule that reaches it through the slide's id (`#anatomy .fig`) no longer applies to the copy.
+- An element revealed by a later press (`data-s`) is not on screen when the slide appears, so it cannot receive a morph. Put the arriving element in the slide's first state.
+- `npm run check` counts the morphs that really fly, and fails a deck with fewer than two (one in a deck under six body slides).
+
+For a hand-off that is not a move from A to B (a figure that rolls, a camera that pulls back), a hook may define `outro(s, done)`:
 
 ```js
 H.rack.outro = (s, done) => {
@@ -133,7 +157,7 @@ H.rack.outro = (s, done) => {
 };
 ```
 
-Pressing next during the outro skips to its end. Any other move cancels it. Before playing, check that the next slide is the one the hand-off was built for, because reordering the deck breaks that assumption.
+Pressing next during the outro skips to its end. Any other move cancels it. Before playing, check that the next slide is the one the hand-off was built for.
 
 ## Motion and accessibility
 

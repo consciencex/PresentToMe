@@ -2,11 +2,11 @@
 
 The deck's memory. Read it before changing anything. Update it in the same session as any change the user asked for.
 
-This is the example deck that ships with PresentToMe. Harbor Foods is invented, and so is every figure.
+This is the example deck that ships with PresentToMe. Example Foods is invented, and so is every figure.
 
 ## Story Brief
 
-1. **Audience.** The board of Harbor Foods. The CFO decides. A saving project last year did not deliver, so the fear is paying now for a saving that may not come.
+1. **Audience.** The board of Example Foods. The CFO decides. A saving project last year did not deliver, so the fear is paying now for a saving that may not come.
 2. **Decision.** Approve buying an 800 kWp rooftop solar system.
 3. **One sentence.** The roof can pay the power bill.
 4. **Why now.** The grid price keeps rising, the bill follows our busiest hour, and cuts come when the grid chooses.
