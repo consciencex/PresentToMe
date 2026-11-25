@@ -81,6 +81,8 @@ const cross = (a, b) => {
 
 ## A calculator the room can use
 
+The calculator is the mouth of the martini glass (see [story.md](story.md)): it opens only after an earlier slide has made the claim it lets the room test.
+
 The money slide in the example (`slides/money.html`, `H.money`) is the minimal form: inputs on the left, tiles and a chart on the right.
 
 - Give a slider to every assumption the audience is likely to doubt, with a range that includes the pessimistic case.

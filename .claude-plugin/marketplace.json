@@ -1,12 +1,14 @@
 {
   "name": "presenttome",
-  "owner": { "name": "PresentToMe contributors" },
-  "description": "PresentToMe: an agent skill for interactive, story-driven presentations.",
+  "owner": {
+    "name": "Suppanimit Meemungkit (Wai)"
+  },
+  "description": "PresentToMe: the storytelling method of Wai (Suppanimit Meemungkit) for interactive presentations.",
   "plugins": [
     {
       "name": "present-to-me",
       "source": "./",
-      "description": "Build interactive, story-driven HTML presentations with a Grill with me interview, live charts, isometric 3D figures, real logos and speaker notes.",
+      "description": "The storytelling method of Wai (Suppanimit Meemungkit) as an agent skill: explain hard things simply with interactive presentations. Grill with me interview, martini glass story, raised cards, meaningful colour, animation, drawn visuals, 3D anatomy, live parameters.",
       "category": "productivity"
     }
   ]

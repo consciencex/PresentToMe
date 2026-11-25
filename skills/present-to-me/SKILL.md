@@ -1,10 +1,10 @@
 ---
 name: present-to-me
-description: Build an interactive, story-driven presentation that runs in the browser, with one idea per slide, press-by-press reveals, animated charts drawn from a live model, isometric 3D anatomy figures, real logos, speaker notes, a presenter window, and a single offline HTML file. Use this skill whenever the user asks for a presentation, slide deck, pitch, keynote, briefing, board or executive deck, or a visual way to explain something simply, and whenever they want a document, report, proposal or data turned into slides, even if they only say "slides" or "present this". Also use it to extend, restyle or fix a deck made with it. It starts with a short "Grill with me" interview that finds the story before any slide is built. Not for editing .pptx, Keynote or Google Slides files.
+description: Build an interactive, story-driven presentation that runs in the browser, with one idea per slide, press-by-press reveals, animated charts drawn from a live model, isometric 3D anatomy figures, real logos, speaker notes, a presenter window, and a single offline HTML file. Use this skill whenever the user asks for a presentation, slide deck, pitch, keynote, briefing, board or executive deck, or a visual way to explain something simply, and whenever they want a document, report, proposal or data turned into slides, even if they only say "slides" or "present this". Also use it to extend, restyle or fix a deck made with it. It starts with a short "Grill with me" interview that finds the story before any slide is built. Not for editing .pptx, Keynote or Google Slides files. ใช้เมื่อผู้ใช้ขอทำสไลด์ พรีเซนต์ deck นำเสนอ หรืออยากอธิบายเรื่องยากให้เข้าใจง่าย
 license: MIT
 compatibility: Needs Node.js 20 or later and a shell. Playwright (Chromium) is needed for the automated check and screenshots.
 metadata:
-  author: PresentToMe contributors
+  author: Suppanimit Meemungkit (Wai)
   version: "1.0.0"
 ---
 
@@ -14,12 +14,33 @@ You build a presentation as a small web project: one HTML file per slide, a mode
 
 The result should feel like a talk the audience can follow without reading: a claim in the title, one picture that proves it, almost no body text. Decoration that carries no meaning reads as machine-made, and the audience stops trusting the content.
 
+This skill packages the storytelling method of Wai (Suppanimit Meemungkit): make a hard subject easy to understand by telling it as an interactive presentation, in the shape of a martini glass, with animation that extends understanding.
+
+## Story first, then the design kit
+
+The story matters most. A deck with a clear story and plain slides works. A deck with fine slides and no story does not. Spend the first effort on what the audience should decide and the one sentence that gets them there, and make every design choice serve that.
+
+Tell the story as a martini glass. The stem comes first: the presenter leads along one path, one idea and one press at a time, until the whole room understands the same thing. Then the mouth opens: the audience asks, sliders move, appendix pages open, and the deck answers. No control is offered before the claim it tests has been made. [references/story.md](references/story.md) explains how to apply this to the talk, the deck and each slide.
+
+The design kit is what makes the story visible. It has six parts. Plan them into the storyboard, and use each one where it carries the point.
+
+| Part of the kit | What it does for the audience | Read |
+|---|---|---|
+| Raised white cards | One idea per card: a tag, a short heading, one drawing, one line. A slide holds three or four ideas and the eye knows where to rest | [visual-style.md](references/visual-style.md) |
+| Colour with meaning | Three colours, each with one meaning for the whole deck. By slide ten the audience reads the colour and needs no legend | [visual-style.md](references/visual-style.md) |
+| Motion on every press | A press reveals what the speaker says next: a line draws, a bar grows, a part lifts. Motion shows order and cause | [motion-and-interaction.md](references/motion-and-interaction.md) |
+| Drawn visuals | Charts from the data and diagrams of the real mechanism. The picture makes the claim before the speaker does | [slide-patterns.md](references/slide-patterns.md) |
+| 3D anatomy | An isometric drawing of the real thing, with parts that light up and move apart. The audience sees what is being bought or built | [anatomy-3d.md](references/anatomy-3d.md) |
+| Live parameters | Sliders on the assumptions the audience doubts. The model recomputes and every later slide follows, so a question in the room is answered on the screen | [numbers-and-comparisons.md](references/numbers-and-comparisons.md) |
+
+A storyboard that uses none of the last four is usually a document cut into slides. A storyboard that uses them where they prove nothing is decoration. For each slide, ask which part of the kit shows this claim best. For the whole deck, check that the strongest parts appear where the story turns: the proof, the choice, the money.
+
 ## The work, in order
 
 Do these in order. Each step ends with something the user can see and correct.
 
 1. **Grill with me.** Interview the user until the story is clear. Read [references/grill-with-me.md](references/grill-with-me.md) and follow it. The output is a Story Brief the user approves. Skip only when the user hands you a finished outline, and even then check the brief's eight lines against it.
-2. **Storyboard.** Turn the brief into a slide list: id, chapter, title as a claim, pattern, number of presses, what the picture is, where its numbers come from. Read [references/story.md](references/story.md) for the arc and [references/slide-patterns.md](references/slide-patterns.md) for the patterns. Show the list and get a yes before building. A wrong story is cheap to fix here and expensive later.
+2. **Storyboard.** Turn the brief into a slide list: id, chapter, title as a claim, pattern, number of presses, what the picture is, which part of the design kit it uses, where its numbers come from. Read [references/story.md](references/story.md) for the arc and [references/slide-patterns.md](references/slide-patterns.md) for the patterns. Show the list and get a yes before building. A wrong story is cheap to fix here and expensive later.
 3. **Scaffold.** Run `node <this skill>/scripts/new-deck.mjs <target folder> --title "…" --brand "…"`, then `npm install` in the target. Fill in `DECK.md`: the audience, the decision, the colour dictionary. The finished example deck in `assets/starter/` is your reference for code and quality. Read its slides and hooks before writing your own.
 4. **Build one chapter at a time.** For each slide: create it from a template (`npm run new -- <id> <template>`), write the hook, write the notes split by press, add the source line. Then `npm run build`, `npm run shot -- <id> <press>`, and look at the image. Show the user each finished chapter.
 5. **Check the whole deck.** `npm run build` prints no line starting with ✗. `npm run check` ends with `all slides ok`. `npm run shots`, then look at every image. A passing check proves nothing about whether a slide is good.

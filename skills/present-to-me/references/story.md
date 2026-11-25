@@ -6,12 +6,13 @@ Read this after the Story Brief is approved and before you write the slide list.
 
 1. The arc
 2. Why that order works
-3. Sizing the deck to the time
-4. Devices that hold a long deck together
-5. Explaining a hard thing simply
-6. Titles
-7. Cutting a slide into presses
-8. The storyboard format
+3. The martini glass
+4. Sizing the deck to the time
+5. Devices that hold a long deck together
+6. Explaining a hard thing simply
+7. Titles
+8. Cutting a slide into presses
+9. The storyboard format
 
 ## 1. The arc
 
@@ -43,7 +44,38 @@ The example deck in `assets/starter/` is the short form: Open (film, title), Why
 - **Risks follow the ask.** Placed before it, they read as hesitation. Placed after, they read as a plan.
 - **Anything contestable or detailed lives in the appendix.** The front stays simple, and the presenter can open any proof when asked.
 
-## 3. Sizing the deck to the time
+## 3. The martini glass
+
+The shape of every talk built with this pack is a martini glass: a narrow stem, then a wide mouth.
+
+- **The stem** is the story as the presenter tells it. One path, one idea at a time, one press at a time. The audience cannot wander, so everyone arrives at the same understanding.
+- **The mouth** opens when the stem is done. Now the audience steers: they ask, the presenter moves a slider, opens an appendix page, jumps to a slide from the menu. Many paths, all starting from the shared understanding the stem built.
+
+The name comes from Segel and Heer's study of narrative visualization, which found this to be the most common structure in the interactive stories they examined: an author-driven narrative first, then reader-driven exploration ([Narrative Visualization: Telling Stories with Data, 2010](https://idl.uw.edu/papers/narrative)). The same study notes that individual slides of an interactive slideshow often work the same way, each making the author's point before inviting interaction.
+
+Apply it at three sizes.
+
+| Size | The stem | The mouth |
+|---|---|---|
+| The talk | The presentation, start to ask | Questions, with the deck as the instrument for answering them |
+| The deck | Open, why now, proof, choice: press by press, no controls | The money slide with its sliders, the questions page, the appendix, the menu |
+| The slide | The presses, in order, each with its sentence | After the last press, the controls on that slide come alive: a slider, a toggle, a hover |
+
+Rules that keep the glass in shape:
+
+- **Stem before mouth, always.** No control is offered before the claim it tests has been made. A slide that opens with sliders is a dashboard, and the audience explores without knowing what to look for.
+- **Open the mouth where doubt lives.** Put a slider on each assumption the audience is likely to challenge, and nowhere else. The Story Brief's hard questions tell you which.
+- **Keep the mouth bounded.** Two to six controls, each with a sensible range, and a Reset. Every position of every slider must give a true and readable result.
+- **Prepare the first moves.** Write two or three slider moves into the notes in square brackets. The presenter then uses the controls to answer doubt, and does not explore live.
+- **Let the mouth feed the ask.** Whatever the room sets on the money slide, the slides after it follow. The decision is then made on numbers the audience chose.
+
+What goes wrong:
+
+- All mouth and no stem: an interactive dashboard presented as a talk. Nobody knows what to conclude.
+- All stem and no mouth: a film. Fine for five minutes, but the doubt in the room is never answered.
+- A mouth that is too wide: so many controls that the presenter gets lost in front of the audience.
+
+## 4. Sizing the deck to the time
 
 Plan one minute a slide on average and one press every 15 to 30 seconds. Keep a fifth of the time for questions.
 
@@ -56,7 +88,7 @@ Plan one minute a slide on average and one press every 15 to 30 seconds. Keep a 
 
 When time is cut, cut whole slides from the middle chapters. Never squeeze two ideas into one slide to save a slide.
 
-## 4. Devices that hold a long deck together
+## 5. Devices that hold a long deck together
 
 - **Callback.** The last line of the opener is the title's headline, word for word. The closing slide returns to it. The audience hears the one sentence three times without a slide called "summary".
 - **A strip that returns.** When a chapter has several parts (three tests, four phases), show them as a strip of boxes. Before each part, the same strip comes back with the finished boxes ticked and the next one lit. The audience always knows where they are.
@@ -70,7 +102,7 @@ When time is cut, cut whole slides from the middle chapters. Never squeeze two i
 - **A bridge sentence.** The last line of each slide's notes names the next slide's question. Slides then feel like one argument.
 - **A visual hand-off.** Sometimes the object on one slide flies into its place on the next. Use it once or twice in a deck, where two slides are truly the same thing at two scales.
 
-## 5. Explaining a hard thing simply
+## 6. Explaining a hard thing simply
 
 Simple does not mean less true. It means the audience needs to hold only one new thing at a time.
 
@@ -86,7 +118,7 @@ Simple does not mean less true. It means the audience needs to hold only one new
 
 When a slide still feels hard, it usually holds two ideas. Split it.
 
-## 6. Titles
+## 7. Titles
 
 A title is one sentence of 4 to 10 words that fits on two lines at most. Four kinds work:
 
@@ -109,7 +141,7 @@ Colour one to three words by meaning: "Pay the *grid*, *rent* the panels, or *ow
 
 Test a title by reading only the titles of the deck in order. They should make the argument alone.
 
-## 7. Cutting a slide into presses
+## 8. Cutting a slide into presses
 
 Write the notes before the slide.
 
@@ -123,7 +155,7 @@ The slide then has `data-steps` equal to the number of marked paragraphs, and th
 
 Slides that are furniture (timeline, risks, the ask, appendix pages) have no presses. They animate once when they appear.
 
-## 8. The storyboard format
+## 9. The storyboard format
 
 Show this to the user before building.
 
