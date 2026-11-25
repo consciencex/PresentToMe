@@ -1,0 +1,3 @@
+/* ===== boot ===== */
+recompute();
+Deck.init();

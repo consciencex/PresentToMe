@@ -1,0 +1,20 @@
+<!--
+  Template "split": a figure on one side (an anatomy scene, a photo, a product drawing) and one card on the other
+  whose content changes with each press.
+  Use: node tools/new-slide.mjs <id> split
+  Place a generated scene with placeScene($('#newFig'), SCN.<name>) in the hook's enter().
+-->
+<section class="slide" id="new-slide" data-title="Short title for the menu" data-steps="3">
+  <div class="in">
+    <div class="hd">
+      <p class="eyebrow"><span class="ch">00</span> Chapter</p>
+      <h2 class="t">What it is made of, <em>part by part</em>.</h2>
+    </div>
+    <div class="fill" style="display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:36px;align-items:center">
+      <div id="newFig" aria-label="Say what the figure shows"></div>
+      <div class="card raised" id="newCard"><span class="tag">1 · Part</span><h3>Name of the part</h3><p>One line on what it does.</p><p class="big">00<small> unit</small></p></div>
+    </div>
+  </div>
+  <p class="src">Where the numbers on this slide come from.</p><span class="pg"></span>
+  <aside class="notes"><h4>Slide name</h4><p>What you say when the slide appears.</p><p data-press="1">The first part.</p><p data-press="2">The second part.</p><p data-press="3">The third part, then one sentence that leads to the next slide.</p></aside>
+</section>

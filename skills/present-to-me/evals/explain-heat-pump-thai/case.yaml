@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: explain-heat-pump-thai
+expected_outcome: |
+  A five-slide explainer in English, with the reply to the user in Thai: one slide shows how a heat pump moves heat instead of making it, with a diagram built up step by step; the money slide computes the yearly saving and the payback from the notes and compares it with the committee's five-year rule; every slide has notes; assumptions are listed.
+context:
+  scaffold_script: place-files.sh

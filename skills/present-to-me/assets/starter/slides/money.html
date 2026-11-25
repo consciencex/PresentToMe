@@ -1,0 +1,36 @@
+<section class="slide" id="money" data-title="Our numbers, live" data-steps="0">
+  <div class="in mw-in">
+    <div class="mw-top">
+      <div class="hd">
+        <p class="eyebrow"><span class="ch">03</span> Decision</p>
+        <h2 class="t">Our numbers, live: <em>move any of them</em>.</h2>
+      </div>
+      <div class="mw-tiles">
+        <div class="mw-tile"><span class="tag">Pays back in</span><b class="m1" data-bind="payback"></b><small id="mwRule"></small></div>
+        <div class="mw-tile"><span class="tag">Saved in <span data-bind="years"></span> years</span><b class="ok" data-bind="saved"></b><small>against staying on the grid</small></div>
+        <div class="mw-tile"><span class="tag">We pay once</span><b data-bind="capex"></b><small>then <span data-bind="om"></span> a year</small></div>
+      </div>
+    </div>
+    <div class="mw-row fill">
+      <div class="card raised mw-in-card no-swipe" id="mwInputs">
+        <span class="tag">What we assume</span>
+        <label class="mw-line"><span>Power bill today<small>a month</small></span><input type="range" data-k="billMonth" min="20000" max="80000" step="1000"><output></output></label>
+        <label class="mw-line"><span>Grid price rise<small>a year</small></span><input type="range" data-k="growth" min="0" max="0.1" step="0.005"><output></output></label>
+        <label class="mw-line"><span>Share the roof supplies<small>of our use</small></span><input type="range" data-k="cover" min="0.1" max="0.4" step="0.01"><output></output></label>
+        <label class="mw-line"><span>Price of the system<small>installed</small></span><input type="range" data-k="capex" min="500000" max="1100000" step="10000"><output></output></label>
+        <label class="mw-line"><span>Upkeep<small>a year</small></span><input type="range" data-k="omYear" min="0" max="30000" step="1000"><output></output></label>
+        <label class="mw-line"><span>Rental discount<small>below the grid price</small></span><input type="range" data-k="ppaDiscount" min="0.05" max="0.3" step="0.01"><output></output></label>
+        <div class="mw-foot">
+          <div class="seg" id="mwYears" role="group" aria-label="Years counted"><button type="button" data-y="10" aria-pressed="false">10 yrs</button><button type="button" data-y="15" aria-pressed="true">15 yrs</button><button type="button" data-y="20" aria-pressed="false">20 yrs</button></div>
+          <button type="button" class="mw-reset" id="mwReset">Reset</button>
+        </div>
+      </div>
+      <div class="card raised mw-chart">
+        <span class="tag">Money kept, added up · against staying on the grid</span>
+        <svg id="mwSvg" class="fig" viewBox="0 0 1040 560" aria-label="Cumulative saving against staying on the grid. Owning starts below zero by the purchase price, rises, and crosses zero at the payback point. Renting starts at zero and rises slowly. The value at the end of each line is labelled"></svg>
+      </div>
+    </div>
+  </div>
+  <p class="src">All values computed live by the deck's model (src/js/model.js) from the inputs shown. Defaults: our bills, the tariff history and the installer quote (example data).</p><span class="pg"></span>
+  <aside class="notes"><h4>The money, live</h4><p>These are the same numbers as the earlier chart, drawn as money kept. Owning starts below zero, by the price of the system, and climbs. Where the orange line crosses zero, the system has paid for itself. Renting, the dashed purple line, never costs us anything up front, and never saves much either.</p><p>Every assumption is on the left, and you can move any of them. [Drag "grid price rise" to zero: the payback moves out, and owning still wins.] [Drag "price of the system" to the top of its range: the worst quote we could get.] Whatever we set here, the decision slide that follows uses the same numbers.</p></aside>
+</section>

@@ -1,0 +1,142 @@
+/* Base: a fixed 1920 × 1080 stage scaled to the window, one idea per slide.
+   Colour carries meaning, never decoration: give --m1, --m2 and --m3 one meaning each for the whole deck and write it in DECK.md
+   (for example m1 = what we own, m2 = what we rent, m3 = the third option). Use the -ink variant for text, -soft for fills. */
+:root {
+  --bg: #FFFFFF; --bg-2: #F7F8FA; --surface: #F4F5F7; --surface-2: #ECEEF1; --surface-3: #E1E4E9;
+  --line: #CDD2DA; --line-2: #E4E7EC;
+  --fg: #1F2329; --fg-2: #4A4F57; --fg-3: #6B7079;
+  --m1: #D96A0B; --m1-ink: #9E4C00; --m1-soft: rgba(217,106,11,.12);
+  --m2: #0A7FBF; --m2-ink: #06608F; --m2-soft: rgba(10,127,191,.10);
+  --m3: #7C4BA8; --m3-ink: #643A8C; --m3-soft: rgba(124,75,168,.10);
+  --paper: #FFFFFF; --paper-ink: #2A2D33;
+  --risk: #C0392B; --risk-soft: rgba(192,57,43,.10);
+  --ok: #17784E; --ok-soft: rgba(23,120,78,.10);
+  --warn: #9A6A00;
+  --page: #E9EBEF; --shadow: rgba(31,35,41,.10); --overlay: rgba(255,255,255,.98);
+  --bar: var(--m1);            /* the thin strip across the top of every slide: one brand colour, or a gradient of brand colours */
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box }
+html, body { height: 100% }
+body { background: var(--page); color: var(--fg); font-family: var(--f-body); overflow: hidden; -webkit-font-smoothing: antialiased }
+button { font: inherit; color: inherit }
+:focus-visible { outline: 3px solid var(--m1-ink); outline-offset: 3px }
+
+/* ---------- viewport & stage ---------- */
+#app { position: fixed; inset: 0 }
+#viewport { position: absolute; top: env(safe-area-inset-top, 0px); bottom: calc(56px + env(safe-area-inset-bottom, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); overflow: hidden }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); overflow: hidden; box-shadow: 0 1px 2px var(--shadow), 0 12px 40px var(--shadow) }
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s linear .45s; background: var(--bg); overflow: hidden }
+.slide.is-active { opacity: 1; visibility: visible; transition: opacity .45s ease, visibility 0s }
+.slide.alt { background: var(--bg-2) }
+/* brand: a thin strip across the top, a small logo or name bottom-right (deck.config.json "brand") */
+.slide::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; z-index: 5; pointer-events: none; background: var(--bar) }
+.slide > .brand { position: absolute; right: 120px; bottom: 30px; height: 30px; z-index: 5; pointer-events: none; display: block }
+.slide > .brand svg { height: 30px; width: auto; display: block }
+.slide > .brand-text { height: auto; bottom: 34px; font: 600 18px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3) }
+.slide.bare > .brand { display: none }
+.slide > aside.notes { display: none }
+.in svg { max-width: 100%; height: auto }
+.slide > .in { position: absolute; inset: 0; padding: 88px 120px 96px; display: flex; flex-direction: column; gap: 40px }
+
+/* builds */
+[data-s] { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1) }
+[data-s].is-on { opacity: 1; transform: none }
+[data-s].fade { transform: none }
+[data-s].dim-later.is-dim { opacity: .28 }
+
+/* ---------- type ---------- */
+.eyebrow { font: 500 22px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); display: flex; gap: 18px; align-items: center; margin: 0 }
+.eyebrow .ch { color: var(--m1-ink) }
+.t { font: 700 66px/1.06 var(--f-display); font-stretch: 112%; letter-spacing: -.012em; margin: 0; text-wrap: balance; max-width: 1560px }
+.t em { font-style: normal; color: var(--m1-ink) }
+.t .b { color: var(--m2-ink) }
+.hd { display: flex; flex-direction: column; gap: 22px }
+.lead { font: 400 32px/1.4 var(--f-body); color: var(--fg-2); margin: 0; max-width: 1300px; text-wrap: pretty }
+.lead b { color: var(--fg); font-weight: 600 }
+p { margin: 0 }
+.mono { font-family: var(--f-mono) }
+.num { font-variant-numeric: tabular-nums }
+.small { font-size: 22px; color: var(--fg-3) }
+.src { display: none }   /* the build moves source lines to the appendix page */
+.pg { position: absolute; right: 310px; bottom: 36px; font: 500 18px/1 var(--f-mono); color: var(--fg-3) }
+.m1 { color: var(--m1-ink) } .m2 { color: var(--m2-ink) } .m3 { color: var(--m3-ink) } .risk { color: var(--risk) } .ok { color: var(--ok) }
+.chip { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 999px; font: 500 22px/1 var(--f-body); background: var(--surface-2); color: var(--fg-2); white-space: nowrap }
+.chip i { width: 12px; height: 12px; border-radius: 50%; background: currentColor; display: inline-block; flex: none }
+.chip.m1 { background: var(--m1-soft); color: var(--m1-ink) }
+.chip.m2 { background: var(--m2-soft); color: var(--m2-ink) }
+.chip.m3 { background: var(--m3-soft); color: var(--m3-ink) }
+.chip.w { background: rgba(154,106,0,.12); color: var(--warn) }
+.chip.r { background: var(--risk-soft); color: var(--risk) }
+.chip.g { background: var(--ok-soft); color: var(--ok) }
+.tag { font: 500 18px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-3) }
+
+/* cards: .card is flat; .raised lifts it. The house card is a mono tag, a short h3, one drawing, and one line (.pk) under a hairline */
+.card { background: var(--surface); border: 1px solid var(--line-2); border-radius: 20px; padding: 32px 34px; display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.card h3 { font: 600 32px/1.2 var(--f-display); font-stretch: 105%; margin: 0 }
+.card p { font-size: 25px; line-height: 1.45; color: var(--fg-2) }
+.raised { background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%); border: 1px solid var(--line-2); border-radius: 24px; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 2px 4px rgba(31,35,41,.04), 0 12px 30px rgba(31,35,41,.07) }
+.card svg.fig { width: 100%; height: auto; flex: 1; min-height: 0 }
+.card .pk { margin: auto 0 0; font-size: 21px; line-height: 1.35; color: var(--fg-2); border-top: 1px solid var(--line-2); padding-top: 14px }
+.card .pk b { color: var(--fg); font-weight: 600 }
+.row { display: flex; gap: 28px }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 28px }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 28px }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 24px }
+.big { font: 700 92px/1 var(--f-display); font-stretch: 118%; letter-spacing: -.02em; font-variant-numeric: tabular-nums }
+.big small { font-size: .42em; font-stretch: 100%; color: var(--fg-3); font-weight: 600; letter-spacing: 0 }
+.fill { flex: 1; min-height: 0 }
+svg text { font-family: var(--f-body); fill: var(--fg-2) }
+
+/* anatomy figures: thin grey line art that lights up in the m1 colour (solids with data-lit) */
+.iso[data-theme="light"] { --anatomy-weight: .9px; --anatomy-hi: var(--fg); --anatomy-mid: color-mix(in srgb, var(--fg-3) 85%, white); --anatomy-lo: color-mix(in srgb, var(--fg-3) 55%, white); --anatomy-faint: var(--line); --anatomy-dot: var(--fg);
+  --anatomy-face: color-mix(in srgb, var(--m1) 34%, white); --anatomy-lit-top: color-mix(in srgb, var(--m1) 18%, white); --anatomy-lit-shade: color-mix(in srgb, var(--m1) 60%, white); --anatomy-lit: var(--m1-ink) }
+svg .mono { font-family: var(--f-mono) }
+
+/* ---------- control bar ---------- */
+#bar { position: absolute; left: 0; right: 0; bottom: 0; height: calc(56px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; padding: 0 max(16px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(16px, env(safe-area-inset-left, 0px)); background: var(--bg); border-top: 1px solid var(--line-2); font: 500 14px/1 var(--f-mono); color: var(--fg-3) }
+#bar button { background: transparent; border: 1px solid var(--line); border-radius: 8px; height: 36px; min-width: 36px; padding: 0 12px; cursor: pointer; color: var(--fg-2); display: inline-flex; align-items: center; gap: 8px }
+#bar button:hover { background: var(--surface-2); color: var(--fg) }
+#bar button[aria-pressed="true"] { background: var(--m1-soft); color: var(--m1-ink); border-color: transparent }
+#bar .where { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; letter-spacing: .04em }
+#bar .count { font-variant-numeric: tabular-nums }
+#progress { position: absolute; left: 0; top: -1px; height: 2px; background: var(--m1); transition: width .4s ease }
+@media (max-width: 640px) { #bar .hide-sm { display: none } }
+
+#notes { position: absolute; left: 50%; transform: translateX(-50%); bottom: 68px; width: min(980px, calc(100% - 32px)); max-height: 42vh; overflow: auto; background: var(--overlay); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; font: 400 16px/1.55 var(--f-body); color: var(--fg-2); z-index: 20; box-shadow: 0 20px 60px var(--shadow) }
+#notes h4 { margin: 0 0 8px; font: 600 13px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--m1-ink) }
+#notes p + p { margin-top: 8px }
+#notes p.later { opacity: .4 }
+#notes p.now { color: var(--fg) }
+#menu { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: 68px; width: min(520px, calc(100% - 32px)); max-height: 70vh; overflow: auto; background: var(--overlay); border: 1px solid var(--line); border-radius: 14px; padding: 10px; z-index: 21; box-shadow: 0 20px 60px var(--shadow) }
+#menu .chap { font: 600 12px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); padding: 14px 10px 6px }
+#menu button { display: flex; width: 100%; text-align: left; background: transparent; border: 0; border-radius: 8px; padding: 9px 10px; cursor: pointer; color: var(--fg-2); font: 400 15px/1.3 var(--f-body); gap: 12px }
+#menu button:hover, #menu button.cur { background: var(--surface-2); color: var(--fg) }
+#menu button span { font-family: var(--f-mono); color: var(--fg-3); min-width: 26px }
+
+/* tooltip inside the stage */
+#tip { position: absolute; z-index: 30; pointer-events: none; background: var(--fg); color: var(--bg); font: 500 22px/1.35 var(--f-body); padding: 12px 16px; border-radius: 10px; max-width: 460px; box-shadow: 0 12px 30px var(--shadow) }
+#tip b { font-weight: 700 }
+
+/* ---------- shared widgets ---------- */
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 12px; padding: 5px; gap: 4px }
+.seg button { border: 0; background: transparent; border-radius: 9px; padding: 12px 20px; font: 500 22px/1 var(--f-body); color: var(--fg-2); cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--surface-3); color: var(--fg); box-shadow: inset 0 0 0 1px var(--line) }
+.seg button.m1[aria-pressed="true"] { background: var(--m1-soft); color: var(--m1-ink); box-shadow: none }
+.seg button.m2[aria-pressed="true"] { background: var(--m2-soft); color: var(--m2-ink); box-shadow: none }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 34px; background: transparent; cursor: pointer }
+input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--line) }
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line) }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: var(--m1-ink); margin-top: -10px; border: 4px solid var(--bg) }
+input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--m1-ink); border: 4px solid var(--bg) }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 22px; color: var(--fg-2) }
+.legend span { display: inline-flex; align-items: center; gap: 10px }
+.legend i { width: 22px; height: 6px; border-radius: 3px; display: inline-block }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-s] { transition: none !important }
+}
+

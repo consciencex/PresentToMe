@@ -1,0 +1,23 @@
+<!--
+  Template "drawing": one large chart or diagram and a column of cards that explain it, one per press.
+  Use: node tools/new-slide.mjs <id> drawing
+  Draw the <svg> in a hook from the model (MODEL, INPUT), and redraw on the "model" event if a number can change.
+-->
+<section class="slide" id="new-slide" data-title="Short title for the menu" data-steps="2">
+  <div class="in">
+    <div class="hd">
+      <p class="eyebrow"><span class="ch">00</span> Chapter</p>
+      <h2 class="t">One sentence the <em>drawing</em> proves.</h2>
+    </div>
+    <div class="fill" style="display:grid;grid-template-columns:minmax(0,1fr) 500px;gap:28px">
+      <div class="card raised"><span class="tag">What the chart measures · the unit · the like-for-like basis</span><svg class="fig" id="newSvg" viewBox="0 0 1100 650" aria-label="Say what this drawing shows and what the reader should see in it"></svg></div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card raised" style="flex:1"><span class="tag">A · Label</span><h3>Short heading</h3><p class="big" data-bind="key"></p></div>
+        <div class="card raised" style="flex:1" data-s="1"><span class="tag">B · Label</span><h3>Short heading</h3><p class="big" data-bind="key"></p></div>
+        <p class="pk" data-s="2" style="font-size:24px;border-top:1px solid var(--line-2);padding-top:16px"><b>The takeaway.</b> One more clause.</p>
+      </div>
+    </div>
+  </div>
+  <p class="src">Where the numbers on this slide come from.</p><span class="pg"></span>
+  <aside class="notes"><h4>Slide name</h4><p>What you say when the slide appears.</p><p data-press="1">What the first press adds.</p><p data-press="2">The takeaway, then one sentence that leads to the next slide.</p></aside>
+</section>

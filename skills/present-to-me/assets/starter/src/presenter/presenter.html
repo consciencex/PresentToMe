@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Presenter</title>
+<style>
+  :root { --bg: #14161A; --card: #1D2026; --line: #2E323A; --fg: #F2F3F5; --fg-2: #B4B8C0; --fg-3: #7C818B; --now: #3A2410; --accent: #F0A04B; --size: 30px }
+  * { box-sizing: border-box } html, body { height: 100% }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, "Segoe UI", sans-serif; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden }
+  header { display: flex; gap: 18px; align-items: baseline; padding: 14px 22px; border-bottom: 1px solid var(--line) }
+  header .n { font: 600 14px ui-monospace, Menlo, monospace; color: var(--fg-3); letter-spacing: .06em }
+  header h1 { margin: 0; font: 600 20px/1.2 inherit; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+  header .press { font: 600 14px ui-monospace, Menlo, monospace; color: var(--accent) }
+  main { overflow: auto; padding: 18px 22px 30px; font-size: var(--size); line-height: 1.42 }
+  .blk { padding: 12px 18px; border-radius: 12px; margin: 0 0 10px; color: var(--fg); border-left: 5px solid transparent }
+  .blk.said { color: var(--fg-3) }
+  .blk.now { background: var(--now); border-left-color: var(--accent) }
+  .blk h4 { margin: 0 0 6px; font: 600 13px ui-monospace, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3) }
+  .blk p { margin: 0 0 .45em } .blk p:last-child { margin: 0 }
+  .blk .k { display: block; font: 600 12px ui-monospace, Menlo, monospace; letter-spacing: .08em; color: var(--fg-3); margin-bottom: 4px }
+  .blk.now .k { color: var(--accent) }
+  .empty { color: var(--fg-3); font-size: 18px }
+  footer { display: flex; gap: 22px; align-items: center; padding: 12px 22px; border-top: 1px solid var(--line); color: var(--fg-2) }
+  footer .next { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+  footer .next b { font: 600 12px ui-monospace, Menlo, monospace; letter-spacing: .08em; color: var(--fg-3); margin-right: 10px }
+  footer .t { font: 600 26px ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; color: var(--fg) }
+  footer .hint { font: 12px ui-monospace, Menlo, monospace; color: var(--fg-3) }
+  #wait { padding: 40px 22px; color: var(--fg-2); font-size: 18px }
+</style>
+</head>
+<body>
+<header><span class="n" id="n"></span><h1 id="title">Presenter</h1><span class="press" id="press"></span></header>
+<main id="main"><p id="wait">Open this window from the deck with the <b>P</b> key or the Presenter button. It follows the deck and shows the notes for the press you are on.</p></main>
+<footer><span class="next" id="next"></span><span class="hint">→ ← move the deck · R timer · + − size</span><span class="t" id="timer">0:00</span></footer>
+<script>
+/*PRESENTER_DATA*/
+(() => {
+  const $ = s => document.querySelector(s), S = { i: -1, step: 0, t0: null, size: 30 };
+  let bc = null, seq = Date.now() % 1e6;
+  try { bc = new BroadcastChannel('deck'); bc.onmessage = e => receive(e.data); } catch (e) {}
+  window.addEventListener('message', e => receive(e.data));
+  const send = m => { if (bc) try { bc.postMessage(m); } catch (e) {} if (window.opener) try { window.opener.postMessage(m, '*'); } catch (e) {} };
+  function receive(m) { if (!m || m.type !== 'state' || (m.i === S.i && m.step === S.step)) return; if (S.i >= 0 && S.t0 == null) S.t0 = Date.now(); S.i = m.i; S.step = m.step; render(); }
+  function render() {
+    const s = PRESENTER.slides[S.i]; if (!s) return;
+    $('#n').textContent = `${s.n} / ${PRESENTER.slides.length}`; $('#title').textContent = s.title;
+    $('#press').textContent = s.steps ? `PRESS ${S.step} / ${s.steps}` : '';
+    // the block being said is the last one at or before the current press; a press with no notes of its own keeps the block before it
+    let now = -1; s.notes.forEach((h, k) => { if (h && k <= S.step) now = k; });
+    const html = s.notes.map((h, k) => h ? `<div class="blk ${k === now ? 'now' : k < now ? 'said' : ''}" data-k="${k}"><span class="k">${k ? 'AFTER PRESS ' + k : 'ON ENTERING'}</span>${h}</div>` : '').join('');
+    $('#main').innerHTML = html || '<p class="empty">No notes for this slide.</p>';
+    const cur = $('.blk.now'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+    const nx = PRESENTER.slides[S.i + 1];
+    $('#next').innerHTML = S.step < s.steps ? `<b>NEXT PRESS</b>${s.notes[S.step + 1] ? s.notes[S.step + 1].replace(/<[^>]+>/g, ' ').slice(0, 110) : 'more of this slide'}` : nx ? `<b>NEXT SLIDE</b>${nx.title}` : '<b>END</b>';
+  }
+  setInterval(() => { const t = S.t0 == null ? 0 : Math.floor((Date.now() - S.t0) / 1000); $('#timer').textContent = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); }, 500);
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); send({ type: 'cmd', cmd: 'next', seq: ++seq }); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); send({ type: 'cmd', cmd: 'prev', seq: ++seq }); }
+    else if (k === 'r' || k === 'R') S.t0 = Date.now();
+    else if (k === '+' || k === '=') { S.size = Math.min(60, S.size + 2); document.documentElement.style.setProperty('--size', S.size + 'px'); }
+    else if (k === '-') { S.size = Math.max(16, S.size - 2); document.documentElement.style.setProperty('--size', S.size + 'px'); }
+  });
+  send({ type: 'hello' }); const hi = setInterval(() => { if (S.i >= 0) clearInterval(hi); else send({ type: 'hello' }); }, 700);
+})();
+</script>
+</body>
+</html>

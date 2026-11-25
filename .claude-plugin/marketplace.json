@@ -1,0 +1,13 @@
+{
+  "name": "presenttome",
+  "owner": { "name": "PresentToMe contributors" },
+  "description": "PresentToMe: an agent skill for interactive, story-driven presentations.",
+  "plugins": [
+    {
+      "name": "present-to-me",
+      "source": "./",
+      "description": "Build interactive, story-driven HTML presentations with a Grill with me interview, live charts, isometric 3D figures, real logos and speaker notes.",
+      "category": "productivity"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "present-to-me",
+  "version": "1.0.0",
+  "description": "Build interactive, story-driven HTML presentations: a Grill with me interview, press-by-press reveals, charts from a live model, isometric 3D figures, real logos, speaker notes and one offline file.",
+  "author": { "name": "PresentToMe contributors" },
+  "homepage": "https://github.com/consciencex/PresentToMe",
+  "repository": "https://github.com/consciencex/PresentToMe",
+  "license": "MIT",
+  "keywords": ["presentation", "slides", "deck", "storytelling", "html", "isometric", "data-visualization", "agent-skill"]
+}

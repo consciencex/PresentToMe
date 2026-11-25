@@ -1,0 +1,20 @@
+<!--
+  Template "cards": two to four parallel reasons, each made concrete by one drawing. The house style of the deck.
+  Use: node tools/new-slide.mjs <id> cards
+  One card per press. Draw each <svg> in a hook (src/js/hooks-*.js): H["<id>"] = { enter, step(s, k), leave }.
+-->
+<section class="slide" id="new-slide" data-title="Short title for the menu" data-steps="3">
+  <div class="in">
+    <div class="hd">
+      <p class="eyebrow"><span class="ch">00</span> Chapter</p>
+      <h2 class="t">One sentence that makes the <em>claim</em>.</h2>
+    </div>
+    <div class="grid3 fill">
+      <div class="card raised" data-s="1"><span class="tag">1 · Label</span><h3>Short heading</h3><svg class="fig" id="newA" viewBox="0 0 480 440" aria-label="Say what this drawing shows"></svg><p class="pk">A plain clause. <b>The clause that matters.</b></p></div>
+      <div class="card raised" data-s="2"><span class="tag">2 · Label</span><h3>Short heading</h3><svg class="fig" id="newB" viewBox="0 0 480 440" aria-label="Say what this drawing shows"></svg><p class="pk">A plain clause. <b>The clause that matters.</b></p></div>
+      <div class="card raised" data-s="3"><span class="tag">3 · Label</span><h3>Short heading</h3><svg class="fig" id="newC" viewBox="0 0 480 440" aria-label="Say what this drawing shows"></svg><p class="pk">A plain clause. <b>The clause that matters.</b></p></div>
+    </div>
+  </div>
+  <p class="src">Where the numbers on this slide come from.</p><span class="pg"></span>
+  <aside class="notes"><h4>Slide name</h4><p>What you say when the slide appears.</p><p data-press="1">What you say when the first card appears.</p><p data-press="2">The second.</p><p data-press="3">The third, then one sentence that leads to the next slide.</p></aside>
+</section>

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: school-laptops-board-deck
+expected_outcome: |
+  A short decision deck that runs offline from one HTML file: about six slides that reveal content press by press, titles that are claims, a chart that compares buying with leasing on the same basis using only the numbers in the notes, speaker notes for every slide, and a list of the assumptions made because the user could not be asked.
+context:
+  scaffold_script: place-files.sh
