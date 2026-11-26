@@ -84,6 +84,7 @@ test("a slide cannot pull a file from outside the assets folder into the page", 
 
 test("a rebuild removes a file its earlier run wrote and the deck no longer has", () => {
   const d = deck("decision");
+  fs.mkdirSync(path.join(d, "public"), { recursive: true });       // git keeps no empty folder, so an installed starter has none
   fs.writeFileSync(path.join(d, "public/old-chart.png"), "x");
   assert.equal(build(d).status, 0);
   assert.ok(fs.existsSync(path.join(d, "dist/old-chart.png")));
