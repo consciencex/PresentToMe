@@ -55,6 +55,24 @@ test("a build without notes drops notes however the tag is written, and HTML com
   for (const s of ["private remark one", "private remark two", "Reference page. Click a question"]) assert.ok(!html.includes(s), `"${s}" is still in the page`);
 });
 
+test("a build without notes drops a notes block with an aside nested inside it, and upper-case tags", () => {
+  const d = deck("decision"), f = path.join(d, "slides/qa.html");
+  fs.writeFileSync(f, fs.readFileSync(f, "utf8")
+    .replace('<aside class="notes">', '<ASIDE CLASS="notes"><aside><p>inner remark</p></aside><p>remark after the inner block</p>')
+    .replace("</aside>", "</ASIDE>"));
+  assert.equal(build(d, "--no-notes", "--out", "public-build").status, 0);
+  const html = fs.readFileSync(path.join(d, "public-build/index.html"), "utf8");
+  for (const s of ["inner remark", "remark after the inner block", "Reference page. Click a question"]) assert.ok(!html.includes(s), `"${s}" is still in the page`);
+});
+
+test("a build without notes refuses a slide that still holds an aside after stripping", () => {
+  const d = deck("decision"), f = path.join(d, "slides/qa.html");
+  fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace("</section>", "<aside><p>a stray remark</p></aside></section>"));
+  const r = build(d, "--no-notes", "--out", "public-build");
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /speaker notes are still in the page/);
+});
+
 test("a slide cannot pull a file from outside the assets folder into the page", () => {
   const d = deck("decision"), f = path.join(d, "slides/qa.html");
   fs.writeFileSync(path.join(d, ".env.local"), "TOKEN=do-not-embed");

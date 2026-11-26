@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node.js 20 or later and a shell. Playwright (Chromium) is needed for the automated check and screenshots.
 metadata:
   author: Suppanimit Meemungkit (Wai)
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # PresentToMe

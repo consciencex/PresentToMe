@@ -52,8 +52,9 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
       const srcs = [...sec.matchAll(/<p class="src"[^>]*>([\s\S]*?)<\/p>/g)];
       if (srcs.length) { bySlide.push({ n: index.length + 1, title, html: srcs.map((x) => x[1].trim()).join(" ") }); for (const x of srcs) sec = sec.replace(x[0], ""); }
       // a build without notes drops every notes block, however its tag is written, and every HTML comment in the slide
-      if (!notes) sec = sec.replace(/<aside\b[^>]*\bnotes\b[^>]*>[\s\S]*?<\/aside>/g, "").replace(/<!--(?!SLIDE_SOURCES)[\s\S]*?-->/g, "");
-      if (!notes && /data-press=|class="[^"]*\bnotes\b/.test(sec)) errors.push(`${file}: speaker notes are still in the page after --no-notes; write them as <aside class="notes">…</aside>`);
+      if (!notes) sec = stripNotes(sec).replace(/<!--(?!SLIDE_SOURCES)[\s\S]*?-->/g, "");
+      // fail closed: a public build refuses any slide that still holds an aside or a press marker after stripping
+      if (!notes && /<\/?aside\b|data-press=|class\s*=\s*["']?[^"'>]*\bnotes\b/i.test(sec)) errors.push(`${file}: speaker notes are still in the page after --no-notes; write them as one <aside class="notes">…</aside>, with no aside inside it`);
       sections.push(sec);
       index.push({ n: index.length + 1, id, title, chapter: ch.title, steps: +((sec.match(/data-steps="(\d+)"/) || [])[1] || 0) });
     });
@@ -187,6 +188,22 @@ export function build({ quiet = false, out = null, notes = true } = {}) {
   for (const p of errors) console.warn("  ✗ " + p);
   for (const p of advice) console.warn("  · " + p);
   return { ok: errors.length === 0, errors, advice, index };
+}
+
+// every notes block with whatever it holds, however its tags are written: the scan counts nested asides, so a block ends at its own closing tag
+function stripNotes(sec) {
+  const tag = /<(\/?)aside\b[^>]*>/gi;
+  let out = "", from = 0, m;
+  while ((m = tag.exec(sec))) {
+    if (m[1] || !/\bnotes\b/i.test(m[0])) continue;
+    let depth = 1, t;
+    const start = m.index;
+    while (depth && (t = tag.exec(sec))) depth += t[1] ? -1 : 1;
+    out += sec.slice(from, start);
+    from = depth ? sec.length : tag.lastIndex;
+    if (depth) break;
+  }
+  return out + sec.slice(from);
 }
 
 // notes as one HTML string per press: a <p data-press="k"> starts press k, and paragraphs after it stay with it
